@@ -6,18 +6,7 @@
   <script type="text/javascript" src="js/perlin.js"></script>
   <script type="text/javascript" src="js/perlin-test-page.js"></script>
   <style type="text/css">
-    .container {
-      width: 825px;
-      border: 1px solid purple;
-    }
-    .container div {
-      display: inline;
-      float: left;
-      width: 25px;
-      height: 25px;
-      border: 1px solid red;
-    }
-    .c0 {
+    /*.c0 {
       background-color: #ffffff;
     }
     .c1 {
@@ -34,6 +23,54 @@
     }
     .c5 {
       background-color: #090404;
+    }*/
+
+    .container {
+      width: 825px;
+      border: 1px solid purple;
+      color: white;
+    }
+    .container div {
+      display: inline;
+      float: left;
+      width: 25px;
+      height: 25px;
+      border: 1px solid red;
+    }
+
+    .btn-box {
+      border: 1px solid brown;
+      width: 150px;
+      height: 500px;
+      position: absolute;
+      top: 50px;
+      right: 0;
+    }
+
+    button {
+      width: 70px;
+      height: 50px;
+      margin: 5px 0;
+    }
+
+
+    .c0 {
+      background-color: #7b3a3a;
+    }
+    .c1 {
+      background-color: #391919;
+    }
+    .c2 {
+      background-color: #391919;
+    }
+    .c3 {
+      background-color: #ffffff;
+    }
+    .c4 {
+      background-color: #391919;
+    }
+    .c5 {
+      background-color: gold;
     }
 
   </style>
@@ -41,6 +78,17 @@
 <body>
   <div class="container">
     <!-- <div class="box"></div> -->
+  </div>
+  <div class="btn-box">
+    <button id="zOut">Zoom Out</button>
+    <button id="zIn">Zoom In</button>
+    <button id="left">Left</button>
+    <button id="right">Right</button>
+    <button id="up">up</button>
+    <button id="down">down</button>
+    <button id="expand">expand</button>
+    <button id="narrow">narrow</button>
+
   </div>
 
 </body>
