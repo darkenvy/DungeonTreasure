@@ -9,7 +9,8 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
 
 // Region is a offset for the Perlin generator.
 // Split inf loading into chunks for management
-var region = [0,1];
+// regionsLoaded is stored as strings as a bugfix
+var region = [0,0];
 var regionsLoaded = ["0,0"];
 var land;
 
@@ -26,7 +27,7 @@ function create() {
   land = game.add.group();
 
   // Create the starter region (only runs once at this point)
-  spawnRegion();
+  spawnRegion(region[0], region[1]);
 
   // Create character
   game.physics.startSystem(Phaser.Physics.P2JS);
@@ -36,7 +37,7 @@ function create() {
   game.camera.follow(player);
 }
 
-function spawnRegion() {
+function spawnRegion(regionX, regionY) {
   // create stars
   // Limit: 12,800 - 20,000 objects before slowdown
   // for (var i=0; i<160; i++) {
@@ -49,8 +50,8 @@ function spawnRegion() {
   var pn = new Perlin('Reno');
   for (var y=0; y<25; y++) {
     for (var x=0; x<25; x++) {
-      var offsetX = (region[0] * 25) + x;
-      var offsetY = (region[1] * 25) + y;
+      var offsetX = (regionX * 25) + x;
+      var offsetY = (regionY * 25) + y;
       // Call Perlin noise and pass in offset coords
       cellNum = pn.noise(offsetX/10, offsetY/10, 0);
       // Perlin maps to float between 0-1, multiply to get range 0-5
@@ -58,9 +59,9 @@ function spawnRegion() {
 
       if (cellNum != 3) {
         if (cellNum == 1){
-          land.create(x*32, y*32, 'darkEarth');
+          land.create(offsetX*32, offsetY*32, 'darkEarth');
         } else {
-          land.create(x*32, y*32, 'earth');
+          land.create(offsetX*32, offsetY*32, 'earth');
         }
       }
     }
@@ -69,7 +70,19 @@ function spawnRegion() {
 }
 
 function update() {
+  // Keep region info up to date
+  region[0] = Math.floor(player.x / 800);
+  region[1] = Math.floor(player.y / 800);
   player.body.setZeroVelocity();
+
+  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
+  // land.forEach(function(piece) {
+  //   if ( (Math.abs(player.x - piece.x)) > 1000 ||
+  //        (Math.abs(player.y - piece.y)) > 1000) {
+  //     piece.destroy();
+  //   }
+
+  // })
 
   // Controls
   if (cursors.up.isDown) {
@@ -83,19 +96,6 @@ function update() {
       player.body.moveRight(300);
   }
 
-  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
-  // land.forEach(function(piece) {
-  //   if ( (Math.abs(player.x - piece.x)) > 1000 ||
-  //        (Math.abs(player.y - piece.y)) > 1000) {
-  //     piece.destroy();
-  //   }
-
-  // })
-
-
-  // Keep region info up to date
-  region[0] = Math.floor(player.x / 800);
-  region[1] = Math.floor(player.y / 800);
 
   // Load upcoming area
   // dont forget to upscale when I 'zoom-in' the level
@@ -104,6 +104,7 @@ function update() {
     if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]+1).toString() ) == -1){
       regionsLoaded.push(region[0].toString() + ',' + (region[1]+1).toString());
       console.log(regionsLoaded);
+      spawnRegion(region[0], region[1]+1);
     }
   }
 
