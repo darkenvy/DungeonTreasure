@@ -1,146 +1,119 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', {
+var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
+  {
     preload: preload,
     create: create,
     update: update,
     render: render
-});
+  }
+);
+
+// Region is a offset for the Perlin generator.
+// Split inf loading into chunks for management
+var region = [0,1];
+var regionsLoaded = ["0,0"];
+var land;
 
 function preload() {
-
-    game.load.tilemap('map', 'assets/tilemaps/maps/collision_test.json', null, Phaser.Tilemap.TILED_JSON);
-    game.load.image('ground_1x1', 'assets/tilemaps/tiles/ground_1x1.png');
-    game.load.image('walls_1x2', 'assets/tilemaps/tiles/walls_1x2.png');
-    game.load.image('tiles2', 'assets/tilemaps/tiles/tiles2.png');
-    game.load.spritesheet('dude', 'assets/games/starstruck/dude.png', 32, 48);
-
+  game.load.image('sky', 'assets/tests/sky.png');
+  game.load.image('ground', 'assets/sprites/platform.png');
+  game.load.image('earth', 'img/earth.png', 32, 32);
+  game.load.image('darkEarth', 'img/dark-earth.png', 32, 32);
+  game.load.spritesheet('dude', 'assets/games/snotattack/dude.png', 64, 64);
 }
 
-var player;
-var facing = 'left';
-var jumpTimer = 0;
-var cursors;
-var jumpButton;
-
-var map;
-var layer;
-
 function create() {
+  game.world.setBounds(0, 0, 192000, 192000);
+  land = game.add.group();
 
-    game.physics.startSystem(Phaser.Physics.P2JS);
+  // Create the starter region (only runs once at this point)
+  spawnRegion();
 
-    game.stage.backgroundColor = '#2d2d2d';
+  // Create character
+  game.physics.startSystem(Phaser.Physics.P2JS);
+  player = game.add.sprite(100,100, 'dude');
+  game.physics.p2.enable(player);
+  cursors = game.input.keyboard.createCursorKeys();
+  game.camera.follow(player);
+}
 
-    map = game.add.tilemap('map');
+function spawnRegion() {
+  // create stars
+  // Limit: 12,800 - 20,000 objects before slowdown
+  // for (var i=0; i<160; i++) {
+  //   for (var j=0; j<80; j++) {
+  //     game.add.sprite(i*10, j*10, 'star');
+  //   }
+  // }
+  // cycle through a 10x10 grid of Perlin noise and construct html according to results
+  // Perlin noise returns a float 0-1.
+  var pn = new Perlin('Reno');
+  for (var y=0; y<25; y++) {
+    for (var x=0; x<25; x++) {
+      var offsetX = (region[0] * 25) + x;
+      var offsetY = (region[1] * 25) + y;
+      // Call Perlin noise and pass in offset coords
+      cellNum = pn.noise(offsetX/10, offsetY/10, 0);
+      // Perlin maps to float between 0-1, multiply to get range 0-5
+      cellNum = Math.floor(cellNum * 6);
 
-    map.addTilesetImage('ground_1x1');
-    map.addTilesetImage('walls_1x2');
-    map.addTilesetImage('tiles2');
-
-    layer = map.createLayer('Tile Layer 1');
-
-    layer.resizeWorld();
-
-    //  Set the tiles for collision.
-    //  Do this BEFORE generating the p2 bodies below.
-    map.setCollisionBetween(1, 12);
-
-    //  Convert the tilemap layer into bodies. Only tiles that collide (see above) are created.
-    //  This call returns an array of body objects which you can perform addition actions on if
-    //  required. There is also a parameter to control optimising the map build.
-    game.physics.p2.convertTilemap(map, layer);
-
-    game.physics.p2.restitution = 0.5;
-    game.physics.p2.gravity.y = 300;
-
-    player = game.add.sprite(100, 200, 'dude');
-    player.animations.add('left', [0, 1, 2, 3], 10, true);
-    player.animations.add('turn', [4], 20, true);
-    player.animations.add('right', [5, 6, 7, 8], 10, true);
-
-    game.physics.p2.enable(player);
-
-    player.body.fixedRotation = true;
-    // player.body.setMaterial(characterMaterial);
-
-    game.camera.follow(player);
-
-    cursors = game.input.keyboard.createCursorKeys();
-    jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+      if (cellNum != 3) {
+        if (cellNum == 1){
+          land.create(x*32, y*32, 'darkEarth');
+        } else {
+          land.create(x*32, y*32, 'earth');
+        }
+      }
+    }
+  }
 
 }
 
 function update() {
+  player.body.setZeroVelocity();
 
-    if (cursors.left.isDown)
-    {
-        player.body.moveLeft(200);
+  // Controls
+  if (cursors.up.isDown) {
+      player.body.moveUp(300)
+  } else if (cursors.down.isDown) {
+      player.body.moveDown(300);
+  }
+  if (cursors.left.isDown) {
+      player.body.velocity.x = -300;
+  } else if (cursors.right.isDown) {
+      player.body.moveRight(300);
+  }
 
-        if (facing != 'left')
-        {
-            player.animations.play('left');
-            facing = 'left';
-        }
+  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
+  // land.forEach(function(piece) {
+  //   if ( (Math.abs(player.x - piece.x)) > 1000 ||
+  //        (Math.abs(player.y - piece.y)) > 1000) {
+  //     piece.destroy();
+  //   }
+
+  // })
+
+
+  // Keep region info up to date
+  region[0] = Math.floor(player.x / 800);
+  region[1] = Math.floor(player.y / 800);
+
+  // Load upcoming area
+  // dont forget to upscale when I 'zoom-in' the level
+  if ((player.y % 800 ) > 600) {
+    // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]+1).toString() ) == -1){
+      regionsLoaded.push(region[0].toString() + ',' + (region[1]+1).toString());
+      console.log(regionsLoaded);
     }
-    else if (cursors.right.isDown)
-    {
-        player.body.moveRight(200);
+  }
 
-        if (facing != 'right')
-        {
-            player.animations.play('right');
-            facing = 'right';
-        }
-    }
-    else
-    {
-        player.body.velocity.x = 0;
 
-        if (facing != 'idle')
-        {
-            player.animations.stop();
-
-            if (facing == 'left')
-            {
-                player.frame = 0;
-            }
-            else
-            {
-                player.frame = 5;
-            }
-
-            facing = 'idle';
-        }
-    }
-
-    if (jumpButton.isDown && game.time.now > jumpTimer && checkIfCanJump())
-    {
-        player.body.moveUp(300);
-        jumpTimer = game.time.now + 750;
-    }
-
-}
-
-function checkIfCanJump() {
-
-    var yAxis = p2.vec2.fromValues(0, 1);
-    var result = false;
-
-    for (var i = 0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++)
-    {
-        var c = game.physics.p2.world.narrowphase.contactEquations[i];
-
-        if (c.bodyA === player.body.data || c.bodyB === player.body.data)
-        {
-            var d = p2.vec2.dot(c.normalA, yAxis); // Normal dot Y-axis
-            if (c.bodyA === player.body.data) d *= -1;
-            if (d > 0.5) result = true;
-        }
-    }
-
-    return result;
 
 }
 
 function render() {
+
+    game.debug.cameraInfo(game.camera, 32, 32);
+    game.debug.spriteCoords(player, 32, 500);
 
 }
