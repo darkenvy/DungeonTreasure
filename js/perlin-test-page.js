@@ -71,8 +71,8 @@ function perlinHTML() {
   // cycle through a 10x10 grid of Perlin noise and construct html according to results
   // Perlin noise returns a float 0-1.
   var pn = new Perlin('Reno');
-  for (var y=0; y<30; y++) {
-    for (var x=0; x<30; x++) {
+  for (var y=0; y<80; y++) {
+    for (var x=0; x<80; x++) {
       cellNum = pn.noise((x + lrPan)/zoom, (y + udPan)/zoom, 0);
 
       if (cellNum >= expandB && cellNum < expandT) {
@@ -82,7 +82,7 @@ function perlinHTML() {
         cellNum = Math.floor(cellNum * 6);
       }
 
-      constructor = '<div class="c' + cellNum + '">' + cellNum + '</div>';
+      constructor = '<div class="c' + cellNum + '">' + '</div>';
       htmlStr += constructor;
       }
     }
