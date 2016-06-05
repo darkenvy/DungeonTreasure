@@ -10,7 +10,7 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
 // Region is a offset for the Perlin generator.
 // Split inf loading into chunks for management
 // regionsLoaded is stored as strings as a bugfix
-var region = [0,0];
+var region = [40,0];
 var regionsLoaded = ["0,0"];
 var land;
 
@@ -31,7 +31,7 @@ function create() {
 
   // Create character
   game.physics.startSystem(Phaser.Physics.P2JS);
-  player = game.add.sprite(100,100, 'dude');
+  player = game.add.sprite(32400,100, 'dude');
   game.physics.p2.enable(player);
   cursors = game.input.keyboard.createCursorKeys();
   game.camera.follow(player);
@@ -75,30 +75,29 @@ function update() {
   region[1] = Math.floor(player.y / 800);
   player.body.setZeroVelocity();
 
-  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
-  // land.forEach(function(piece) {
-  //   if ( (Math.abs(player.x - piece.x)) > 1000 ||
-  //        (Math.abs(player.y - piece.y)) > 1000) {
-  //     piece.destroy();
-  //   }
-
-  // })
-
   // Controls
   if (cursors.up.isDown) {
-      player.body.moveUp(300)
+    player.body.moveUp(300)
   } else if (cursors.down.isDown) {
-      player.body.moveDown(300);
+    player.body.moveDown(300);
   }
   if (cursors.left.isDown) {
-      player.body.velocity.x = -300;
+    player.body.velocity.x = -300;
   } else if (cursors.right.isDown) {
-      player.body.moveRight(300);
+    player.body.moveRight(300);
   }
 
 
-  // Load upcoming area
+  // ================= Load upcoming area ===================== //
   // dont forget to upscale when I 'zoom-in' the level
+  if ((player.x % 800 ) > 600) {
+    // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf((region[0]+1).toString() + ',' + region[1].toString() ) == -1){
+      regionsLoaded.push((region[0]+1).toString() + ',' + region[1].toString());
+      console.log(regionsLoaded);
+      spawnRegion(region[0]+1, region[1]);
+    }
+  }
   if ((player.y % 800 ) > 600) {
     // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
     if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]+1).toString() ) == -1){
@@ -108,9 +107,24 @@ function update() {
     }
   }
 
+  // ======================== Cleanup ========================= //
+  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
+  land.forEach(function(piece) {
+    if (Math.floor(piece.y / 800) == region[1]-1) {
+      console.log("destroyed");
+      piece.destroy();
+    }
+    if (Math.floor(piece.x / 800) == region[0]-1) {
+      console.log("destroyed");
+      piece.destroy();
+    }
+  })
+
+
 
 
 }
+
 
 function render() {
 
