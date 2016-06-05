@@ -35,23 +35,20 @@ function preload() {
 function create() {
   // Define world boundries, land and initial spawn
   game.world.setBounds(0, 0, 192000, 192000);
-  land = game.add.group();
+  land = game.add.group(); // land is now a group that contains all collidable tiles
+  land.enableBody = true; // Give land the .body tag
   spawnRegion(region[0], region[1]); // Create the starter region (only runs once at this point)
 
-  //  Add a sprite
+  //  Add a sprite with animations & directions
   player = game.add.sprite(96540,100, 'dude');
-  game.physics.startSystem(Phaser.Physics.P2JS); //  Enable p2 physics
-  // game.physics.p2.enable(land);
-  game.physics.p2.enable(player); //  Enable if for physics. This creates a default rectangular body.
-  game.physics.p2.gravity.y = 350;
-
   player.animations.add('left', [0, 1, 2, 3], 10, true);
   player.animations.add('turn', [4], 20, true);
   player.animations.add('right', [5, 6, 7, 8], 10, true);
-  player.body.fixedRotation = true;
-  player.body.damping = 0.5;
-  game.physics.p2.world.defaultContactMaterial.friction = 0.3;
-  game.physics.p2.world.setGlobalStiffness(1e5);
+
+  // Physics Enable
+  game.physics.startSystem(Phaser.Physics.ARCADE);
+  game.physics.arcade.enable(player);
+  player.body.gravity.y = 300;
 
 
 
@@ -83,10 +80,11 @@ function spawnRegion(regionX, regionY) {
 
       if (cellNum != 3) {
         if (cellNum == 1){
-          land.create(offsetX*64, offsetY*64, 'darkEarth');
+          var ground = land.create(offsetX*64, offsetY*64, 'darkEarth');
         } else {
-          land.create(offsetX*64, offsetY*64, 'earth');
+          var ground = land.create(offsetX*64, offsetY*64, 'earth');
         }
+        ground.body.immovable = true;
       }
     }
   }
@@ -94,11 +92,46 @@ function spawnRegion(regionX, regionY) {
 }
 
 function update() {
+  game.physics.arcade.collide(player, land);
   // Keep region info up to date
   region[0] = Math.floor(player.x / 1600);
   region[1] = Math.floor(player.y / 1600);
 
   // Controls
+  if (cursors.left.isDown) {
+      player.body.velocity.x = -150;
+
+      if (facing != 'left') {
+          player.animations.play('left');
+          facing = 'left';
+      }
+  }
+  else if (cursors.right.isDown) {
+      player.body.velocity.x = 150;
+
+      if (facing != 'right') {
+          player.animations.play('right');
+          facing = 'right';
+      }
+  }
+  else {
+      if (facing != 'idle') {
+          player.animations.stop();
+
+          if (facing == 'left') {
+              player.frame = 0;
+          }
+          else {
+              player.frame = 5;
+          }
+
+          facing = 'idle';
+      }
+  }
+  if (cursors.up.isDown && player.body.touching.down) {
+        player.body.velocity.y = -350;
+  }
+
   // if (cursors.up.isDown) {
   //   player.body.moveUp(300)
   // } else if (cursors.down.isDown) {
@@ -110,38 +143,38 @@ function update() {
   //   player.body.moveRight(300);
   // }
 
-  if (cursors.left.isDown) {
-      player.body.moveLeft(200);
-      if (facing != 'left') {
-          player.animations.play('left');
-          facing = 'left';
-      }
-  }
-  else if (cursors.right.isDown) {
-      player.body.moveRight(200);
-      if (facing != 'right') {
-          player.animations.play('right');
-          facing = 'right';
-      }
-  }
-  else {
-      player.body.velocity.x = 0;
-      if (facing != 'idle') {
-          player.animations.stop();
-          if (facing == 'left') {
-              player.frame = 0;
-          }
-          else {
-              player.frame = 5;
-          }
+  // if (cursors.left.isDown) {
+  //     player.body.moveLeft(200);
+  //     if (facing != 'left') {
+  //         player.animations.play('left');
+  //         facing = 'left';
+  //     }
+  // }
+  // else if (cursors.right.isDown) {
+  //     player.body.moveRight(200);
+  //     if (facing != 'right') {
+  //         player.animations.play('right');
+  //         facing = 'right';
+  //     }
+  // }
+  // else {
+  //     player.body.velocity.x = 0;
+  //     if (facing != 'idle') {
+  //         player.animations.stop();
+  //         if (facing == 'left') {
+  //             player.frame = 0;
+  //         }
+  //         else {
+  //             player.frame = 5;
+  //         }
 
-          facing = 'idle';
-      }
-  }
-  if (jumpButton.isDown && game.time.now > jumpTimer && checkIfCanJump()) {
-      player.body.moveUp(300);
-      jumpTimer = game.time.now + 750;
-  }
+  //         facing = 'idle';
+  //     }
+  // }
+  // if (jumpButton.isDown && game.time.now > jumpTimer && checkIfCanJump()) {
+  //     player.body.moveUp(300);
+  //     jumpTimer = game.time.now + 750;
+  // }
 
 
 
