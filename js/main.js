@@ -90,15 +90,32 @@ function update() {
 
   // ================= Load upcoming area ===================== //
   // dont forget to upscale when I 'zoom-in' the level
-  if ((player.x % 800 ) > 600) {
-    // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
+  if ((player.x % 800 ) < 100) {
+    // If the next region (right) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf((region[0]-1).toString() + ',' + region[1].toString() ) == -1){
+      regionsLoaded.push((region[0]-1).toString() + ',' + region[1].toString());
+      console.log(regionsLoaded);
+      spawnRegion(region[0]-1, region[1]);
+    }
+  }
+  if ((player.x % 800 ) > 700) {
+    // If the next region (left) is not inside 'regionsLoaded' then load and add to list
     if (regionsLoaded.indexOf((region[0]+1).toString() + ',' + region[1].toString() ) == -1){
       regionsLoaded.push((region[0]+1).toString() + ',' + region[1].toString());
       console.log(regionsLoaded);
       spawnRegion(region[0]+1, region[1]);
     }
   }
-  if ((player.y % 800 ) > 600) {
+
+  if ((player.y % 800 ) < 100) {
+    // If the next region (upwards) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]-1).toString() ) == -1){
+      regionsLoaded.push(region[0].toString() + ',' + (region[1]-1).toString());
+      console.log(regionsLoaded);
+      spawnRegion(region[0], region[1]-1);
+    }
+  }
+  if ((player.y % 800 ) > 700) {
     // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
     if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]+1).toString() ) == -1){
       regionsLoaded.push(region[0].toString() + ',' + (region[1]+1).toString());
@@ -109,16 +126,16 @@ function update() {
 
   // ======================== Cleanup ========================= //
   // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
-  land.forEach(function(piece) {
-    if (Math.floor(piece.y / 800) == region[1]-1) {
-      console.log("destroyed");
-      piece.destroy();
-    }
-    if (Math.floor(piece.x / 800) == region[0]-1) {
-      console.log("destroyed");
-      piece.destroy();
-    }
-  })
+  // land.forEach(function(piece) {
+  //   if (Math.floor(piece.y / 800) == region[1]-1) {
+  //     console.log("destroyed");
+  //     piece.destroy();
+  //   }
+  //   if (Math.floor(piece.x / 800) == region[0]-1) {
+  //     console.log("destroyed");
+  //     piece.destroy();
+  //   }
+  // })
 
 
 
