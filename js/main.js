@@ -10,15 +10,15 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
 // Region is a offset for the Perlin generator.
 // Split inf loading into chunks for management
 // regionsLoaded is stored as strings as a bugfix
-var region = [40,0];
+var region = [60,0];
 var regionsLoaded = ["0,0"];
 var land;
 
 function preload() {
   game.load.image('sky', 'assets/tests/sky.png');
   game.load.image('ground', 'assets/sprites/platform.png');
-  game.load.image('earth', 'img/earth.png', 32, 32);
-  game.load.image('darkEarth', 'img/dark-earth.png', 32, 32);
+  game.load.image('earth', 'img/earth.png', 64, 64);
+  game.load.image('darkEarth', 'img/dark-earth.png', 64, 64);
   game.load.spritesheet('dude', 'assets/games/snotattack/dude.png', 64, 64);
 }
 
@@ -31,22 +31,14 @@ function create() {
 
   // Create character
   game.physics.startSystem(Phaser.Physics.P2JS);
-  player = game.add.sprite(32400,100, 'dude');
+  player = game.add.sprite(96400,100, 'dude');
   game.physics.p2.enable(player);
   cursors = game.input.keyboard.createCursorKeys();
   game.camera.follow(player);
 }
 
 function spawnRegion(regionX, regionY) {
-  // create stars
-  // Limit: 12,800 - 20,000 objects before slowdown
-  // for (var i=0; i<160; i++) {
-  //   for (var j=0; j<80; j++) {
-  //     game.add.sprite(i*10, j*10, 'star');
-  //   }
-  // }
-  // cycle through a 10x10 grid of Perlin noise and construct html according to results
-  // Perlin noise returns a float 0-1.
+  // Perlin noise returns a float between 0-1.
   var pn = new Perlin('Reno');
   for (var y=0; y<25; y++) {
     for (var x=0; x<25; x++) {
@@ -59,9 +51,9 @@ function spawnRegion(regionX, regionY) {
 
       if (cellNum != 3) {
         if (cellNum == 1){
-          land.create(offsetX*32, offsetY*32, 'darkEarth');
+          land.create(offsetX*64, offsetY*64, 'darkEarth');
         } else {
-          land.create(offsetX*32, offsetY*32, 'earth');
+          land.create(offsetX*64, offsetY*64, 'earth');
         }
       }
     }
@@ -71,8 +63,8 @@ function spawnRegion(regionX, regionY) {
 
 function update() {
   // Keep region info up to date
-  region[0] = Math.floor(player.x / 800);
-  region[1] = Math.floor(player.y / 800);
+  region[0] = Math.floor(player.x / 1600);
+  region[1] = Math.floor(player.y / 1600);
   player.body.setZeroVelocity();
 
   // Controls
@@ -90,7 +82,7 @@ function update() {
 
   // ================= Load upcoming area ===================== //
   // dont forget to upscale when I 'zoom-in' the level
-  if ((player.x % 800 ) < 100) {
+  if ((player.x % 1600 ) < 100) {
     // If the next region (right) is not inside 'regionsLoaded' then load and add to list
     if (regionsLoaded.indexOf((region[0]-1).toString() + ',' + region[1].toString() ) == -1){
       regionsLoaded.push((region[0]-1).toString() + ',' + region[1].toString());
@@ -98,7 +90,7 @@ function update() {
       spawnRegion(region[0]-1, region[1]);
     }
   }
-  if ((player.x % 800 ) > 700) {
+  if ((player.x % 1600 ) > 700) {
     // If the next region (left) is not inside 'regionsLoaded' then load and add to list
     if (regionsLoaded.indexOf((region[0]+1).toString() + ',' + region[1].toString() ) == -1){
       regionsLoaded.push((region[0]+1).toString() + ',' + region[1].toString());
@@ -107,7 +99,7 @@ function update() {
     }
   }
 
-  if ((player.y % 800 ) < 100) {
+  if ((player.y % 1600 ) < 100) {
     // If the next region (upwards) is not inside 'regionsLoaded' then load and add to list
     if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]-1).toString() ) == -1){
       regionsLoaded.push(region[0].toString() + ',' + (region[1]-1).toString());
@@ -115,7 +107,7 @@ function update() {
       spawnRegion(region[0], region[1]-1);
     }
   }
-  if ((player.y % 800 ) > 700) {
+  if ((player.y % 1600 ) > 700) {
     // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
     if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]+1).toString() ) == -1){
       regionsLoaded.push(region[0].toString() + ',' + (region[1]+1).toString());
@@ -127,19 +119,19 @@ function update() {
   // ======================== Cleanup ========================= //
   // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
   land.forEach(function(piece) {
-    if (Math.floor(piece.x / 800) == region[0]-2) {
+    if (Math.floor(piece.x / 1600) == region[0]-2) {
       removeRegionLoaded(region[0]-2, 0);
       piece.destroy();
     }
-    if (Math.floor(piece.x / 800) == region[0]+2) {
+    if (Math.floor(piece.x / 1600) == region[0]+2) {
       removeRegionLoaded(region[0]+2, 0);
       piece.destroy();
     }
-    if (Math.floor(piece.y / 800) == region[1]-2) {
+    if (Math.floor(piece.y / 1600) == region[1]-2) {
       removeRegionLoaded(region[1]-2, 1);
       piece.destroy();
     }
-    if (Math.floor(piece.y / 800) == region[1]+2) {
+    if (Math.floor(piece.y / 1600) == region[1]+2) {
       removeRegionLoaded(region[1]+2, 1);
       piece.destroy();
     }
@@ -151,6 +143,7 @@ function update() {
     for (var i=0; i<regionsLoaded.length; i++) {
       if (regionsLoaded[i].split(',')[selector] == region) {
         regionsLoaded.splice(i, 1);
+        console.log(land.length);
         // console.log(regionsLoaded, i);
       }
     }
