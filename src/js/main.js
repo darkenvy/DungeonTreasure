@@ -126,16 +126,35 @@ function update() {
 
   // ======================== Cleanup ========================= //
   // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
-  // land.forEach(function(piece) {
-  //   if (Math.floor(piece.y / 800) == region[1]-1) {
-  //     console.log("destroyed");
-  //     piece.destroy();
-  //   }
-  //   if (Math.floor(piece.x / 800) == region[0]-1) {
-  //     console.log("destroyed");
-  //     piece.destroy();
-  //   }
-  // })
+  land.forEach(function(piece) {
+    if (Math.floor(piece.x / 800) == region[0]-2) {
+      removeRegionLoaded(region[0]-2, 0);
+      piece.destroy();
+    }
+    if (Math.floor(piece.x / 800) == region[0]+2) {
+      removeRegionLoaded(region[0]+2, 0);
+      piece.destroy();
+    }
+    if (Math.floor(piece.y / 800) == region[1]-2) {
+      removeRegionLoaded(region[1]-2, 1);
+      piece.destroy();
+    }
+    if (Math.floor(piece.y / 800) == region[1]+2) {
+      removeRegionLoaded(region[1]+2, 1);
+      piece.destroy();
+    }
+
+  })
+
+  function removeRegionLoaded(region, selector) {
+    console.log("destroyed");
+    for (var i=0; i<regionsLoaded.length; i++) {
+      if (regionsLoaded[i].split(',')[selector] == region) {
+        regionsLoaded.splice(i, 1);
+        // console.log(regionsLoaded, i);
+      }
+    }
+  }
 
 
 
