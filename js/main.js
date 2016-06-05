@@ -13,28 +13,60 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, '',
 var region = [60,0];
 var regionsLoaded = ["0,0"];
 var land;
+// Physics variables
+var sprite;
+var player;
+var facing = 'left';
+var jumpTimer = 0;
+var cursors;
+var jumpButton;
+var yAxis = p2.vec2.fromValues(0, 1);
+
 
 function preload() {
+  // Load Image Assets
   game.load.image('sky', 'assets/tests/sky.png');
   game.load.image('ground', 'assets/sprites/platform.png');
   game.load.image('earth', 'img/earth.png', 64, 64);
   game.load.image('darkEarth', 'img/dark-earth.png', 64, 64);
-  game.load.spritesheet('dude', 'assets/games/snotattack/dude.png', 64, 64);
+  game.load.spritesheet('dude', 'assets/games/starstruck/dude.png', 32, 48);
 }
 
 function create() {
+  // Define world boundries, land and initial spawn
   game.world.setBounds(0, 0, 192000, 192000);
   land = game.add.group();
+  spawnRegion(region[0], region[1]); // Create the starter region (only runs once at this point)
 
-  // Create the starter region (only runs once at this point)
-  spawnRegion(region[0], region[1]);
+  //  Add a sprite
+  player = game.add.sprite(96540,100, 'dude');
+  game.physics.startSystem(Phaser.Physics.P2JS); //  Enable p2 physics
+  // game.physics.p2.enable(land);
+  game.physics.p2.enable(player); //  Enable if for physics. This creates a default rectangular body.
+  game.physics.p2.gravity.y = 350;
 
-  // Create character
-  game.physics.startSystem(Phaser.Physics.P2JS);
-  player = game.add.sprite(96400,100, 'dude');
-  game.physics.p2.enable(player);
+  player.animations.add('left', [0, 1, 2, 3], 10, true);
+  player.animations.add('turn', [4], 20, true);
+  player.animations.add('right', [5, 6, 7, 8], 10, true);
+  player.body.fixedRotation = true;
+  player.body.damping = 0.5;
+  game.physics.p2.world.defaultContactMaterial.friction = 0.3;
+  game.physics.p2.world.setGlobalStiffness(1e5);
+
+
+
+  // Setup Arrow keys & Camera
   cursors = game.input.keyboard.createCursorKeys();
+  jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   game.camera.follow(player);
+
+  // Create Materials
+  // var spriteMaterial = game.physics.p2.createMaterial('spriteMaterial', player.body);
+  // var worldMaterial = game.physics.p2.createMaterial('worldMaterial');
+  // var boxMaterial = game.physics.p2.createMaterial('worldMaterial');
+  //  4 trues = the 4 faces of the world in left, right, top, bottom order
+  // game.physics.p2.setWorldMaterial(worldMaterial, true, true, true, true);
+
 }
 
 function spawnRegion(regionX, regionY) {
@@ -45,7 +77,7 @@ function spawnRegion(regionX, regionY) {
       var offsetX = (regionX * 25) + x;
       var offsetY = (regionY * 25) + y;
       // Call Perlin noise and pass in offset coords
-      cellNum = pn.noise(offsetX/10, offsetY/10, 0);
+      cellNum = pn.noise(offsetX/5, offsetY/5, 0);
       // Perlin maps to float between 0-1, multiply to get range 0-5
       cellNum = Math.floor(cellNum * 6);
 
@@ -65,19 +97,52 @@ function update() {
   // Keep region info up to date
   region[0] = Math.floor(player.x / 1600);
   region[1] = Math.floor(player.y / 1600);
-  player.body.setZeroVelocity();
 
   // Controls
-  if (cursors.up.isDown) {
-    player.body.moveUp(300)
-  } else if (cursors.down.isDown) {
-    player.body.moveDown(300);
-  }
+  // if (cursors.up.isDown) {
+  //   player.body.moveUp(300)
+  // } else if (cursors.down.isDown) {
+  //   player.body.moveDown(300);
+  // }
+  // if (cursors.left.isDown) {
+  //   player.body.velocity.x = -300;
+  // } else if (cursors.right.isDown) {
+  //   player.body.moveRight(300);
+  // }
+
   if (cursors.left.isDown) {
-    player.body.velocity.x = -300;
-  } else if (cursors.right.isDown) {
-    player.body.moveRight(300);
+      player.body.moveLeft(200);
+      if (facing != 'left') {
+          player.animations.play('left');
+          facing = 'left';
+      }
   }
+  else if (cursors.right.isDown) {
+      player.body.moveRight(200);
+      if (facing != 'right') {
+          player.animations.play('right');
+          facing = 'right';
+      }
+  }
+  else {
+      player.body.velocity.x = 0;
+      if (facing != 'idle') {
+          player.animations.stop();
+          if (facing == 'left') {
+              player.frame = 0;
+          }
+          else {
+              player.frame = 5;
+          }
+
+          facing = 'idle';
+      }
+  }
+  if (jumpButton.isDown && game.time.now > jumpTimer && checkIfCanJump()) {
+      player.body.moveUp(300);
+      jumpTimer = game.time.now + 750;
+  }
+
 
 
   // ================= Load upcoming area ===================== //
@@ -151,6 +216,28 @@ function update() {
 
 
 
+
+}
+
+function checkIfCanJump() {
+
+    var result = false;
+
+    for (var i=0; i < game.physics.p2.world.narrowphase.contactEquations.length; i++) {
+        var c = game.physics.p2.world.narrowphase.contactEquations[i];
+        if (c.bodyA === player.body.data || c.bodyB === player.body.data) {
+            var d = p2.vec2.dot(c.normalA, yAxis);
+            if (c.bodyA === player.body.data) {
+                d *= -1;
+            }
+            if (d > 0.5) {
+                console.log('can jump');
+                result = true;
+            }
+        }
+    }
+
+    return result;
 
 }
 
