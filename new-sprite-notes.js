@@ -23,3 +23,14 @@ function create() {
 function update() {
   game.physics.arcade.collide(snakes, land);
 }
+
+
+
+
+
+// Notes
+
+
+// if (!(sprite.getBounds().contains(x, y))) {
+//     // Do something
+// }
