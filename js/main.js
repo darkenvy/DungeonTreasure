@@ -22,12 +22,17 @@ var cursors;
 var jumpButton;
 // var yAxis = p2.vec2.fromValues(0, 1);
 var stars;
+
+// Stats
 var score = 0;
 var scoreText;
 var timer = 120;
 var timerText;
+var depth = 0;
+var depthText;
 
 var vignette;
+var jetVelocity = 0;
 
 
 function preload() {
@@ -69,7 +74,8 @@ function create() {
 
   // Setup Arrow keys & Camera
   cursors = game.input.keyboard.createCursorKeys();
-  jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  // jumpButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
+  jetButton = game.input.keyboard.addKey(Phaser.Keyboard.SPACEBAR);
   game.camera.follow(player);
 
 
@@ -77,6 +83,7 @@ function create() {
   vignette = game.add.sprite(0, 0, 'dark');
   vignette.alpha = 0.8;
   scoreText = game.add.text(0, 0, 'Score: 0', { fontSize: '32px', fill: '#fff' });
+  depthText = game.add.text(0, 0, 'Depth [ 0m ]', { fontSize: '32px', fill: '#fff' });
   timerText = game.add.text(0, 0, '120', { fontSize: '32px', fill: '#e46' });
 
   game.time.events.repeat(Phaser.Timer.SECOND * 1, 100000, tictoc, this);
@@ -98,8 +105,8 @@ function spawnRegion(regionX, regionY) {
       var offsetX = (regionX * 25) + x;
       var offsetY = (regionY * 25) + y;
       // Call Perlin noise and pass in offset coords
-      cellNum = pn.noise(offsetX/7, offsetY/7, 0);
-      starNum = pn.noise(offsetX/7, offsetY/7, 0.5);
+      cellNum = pn.noise(offsetX/4, offsetY/4, 0);
+      starNum = pn.noise(offsetX/4, offsetY/4, 0.5);
       // Perlin maps to float between 0-1, multiply to get range 0-5
       cellNum = Math.floor(cellNum * 6);
       starNum = Math.floor(starNum * 7);
@@ -135,6 +142,10 @@ function update() {
   scoreText.y = game.camera.y + 30;
   timerText.x = game.camera.x + 400;
   timerText.y = game.camera.y + 30;
+  depthText.x = game.camera.x + 50;
+  depthText.y = game.camera.y + 60;
+  depth = Math.floor(player.y/64);
+  depthText.text = "Depth [ " + depth + "m ]";
 
   vignette.x = game.camera.x - 25; // 25 pixels on each side for overscan
   vignette.y = game.camera.y - 25;
@@ -144,6 +155,12 @@ function update() {
     vignette.alpha = 0.7 + (Math.random()/10)
   }
 
+  for (var i=0; i< stars.children.length; i++) {
+    if (stars.children[i].body.velocity.y > 200) {
+      console.log(i, "destroyed");
+      stars.children[i].destroy();
+    }
+  }
 
   // Keep region info up to date
   region[0] = Math.floor(player.x / 1600);
@@ -183,9 +200,19 @@ function update() {
       }
   }
   if (cursors.up.isDown && player.body.touching.down) {
-        player.body.velocity.y = -450;
+    player.body.velocity.y = -450;
   }
+  // Jetpack activate
+  if (jetButton.isDown) {
+    // console.log(player.body.velocity.y);
+    if (player.body.velocity.y > -200) {
+      jetVelocity = player.body.velocity.y - 50;
+      console.log(jetVelocity);
+      // player.body.velocity.y = -200;
+      player.body.velocity.y = jetVelocity ;
 
+    }
+  }
 
 
   // ================= Load upcoming area ===================== //
