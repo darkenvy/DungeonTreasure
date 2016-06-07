@@ -57,7 +57,7 @@ function controls() {
       player.body.velocity.y = jetVelocity ;
       timer -= 0.3;
       // timer = (Math.floor(timer * 10))/10;
-      timerText.text = timer;
+      // timerText.text = timer;
 
     }
   }

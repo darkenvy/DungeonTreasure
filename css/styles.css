@@ -1,0 +1,29 @@
+body {
+  background-image: url('../img/twinkle_twinkle.png');
+  color: white;
+}
+
+.container {
+  /*position: relative;*/
+  border: 1px solid red;
+}
+
+/*.left {
+  border: 1px solid red;
+  width: 100px;
+}
+.right {
+  border: 1px solid red;
+  width: 100px;
+}*/
+
+#game {
+  border: 1px solid red;
+  text-align: center;
+  /*width: 800px;*/
+/*  width: 800px;
+  height: 600px;
+  text-align: center;
+  float: left;
+  position: relative;*/
+}
