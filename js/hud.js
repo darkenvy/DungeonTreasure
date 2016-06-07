@@ -2,14 +2,14 @@ function hud() {
   // Move the health and Counter with camera
   scoreText.x = game.camera.x + 50;
   scoreText.y = game.camera.y + 500;
-  healthText.x = game.camera.x + 50;
-  healthText.y = game.camera.y + 30;
+  // healthText.x = game.camera.x + 50;
+  // healthText.y = game.camera.y + 30;
   // timerText.x = game.camera.x + 400;
   // timerText.y = game.camera.y + 30;
-  depthText.x = game.camera.x + 650;
-  depthText.y = game.camera.y + 30;
+  // depthText.x = game.camera.x + 650;
+  // depthText.y = game.camera.y + 30;
   depth = Math.floor(player.y/64) - 4;
-  depthText.text = "Depth [ " + depth + "m ]";
+  // depthText.text = "Depth [ " + depth + "m ]";
   score = depth + (totalCollects * 20) - (totalHurts * 20);
   scoreText.text = "Score: " + score;
 
