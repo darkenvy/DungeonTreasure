@@ -78,21 +78,39 @@ function spawnRegion(regionX, regionY) {
       var offsetY = (regionY * 25) + y;
       // Call Perlin noise and pass in offset coords
       cellNum = pn.noise(offsetX/4, offsetY/4, 0);
+      rockType = pn.noise(offsetX/30, offsetY/30, 0.25);
       starNum = pn.noise(offsetX/4, offsetY/4, 0.5);
       snakeNum = pn.noise(offsetX/4, offsetY/4, 0.5);
       // Perlin maps to float between 0-1, multiply to get range 0-5
       cellNum = Math.floor(cellNum * 6);
+      rockType = Math.floor(rockType * 3);
       starNum = Math.floor(starNum * 8);
       snakeNum = Math.floor(snakeNum * 8);
 
       // offsetY > 4 is for the first tile of the game. So he is not undeground
       if (cellNum != 3 && cellNum != 4 && offsetY > 4) {
-        if (cellNum == 1 && offsetY != 4){
+        // Different states of land, mapped out via the Perlin noise
+        if (cellNum == 1 && offsetY != 4) {
           var ground = land.create(offsetX*64, offsetY*64, 'darkEarth');
-        } else if (offsetY == 5){
+        }
+        else if (offsetY == 5) {
           var ground = land.create(offsetX*64, offsetY*64, 'earthgrass');
-        } else {
-          var ground = land.create(offsetX*64, offsetY*64, 'earth');
+        }
+        else if (rockType == 1 && player.y <= 64000) {
+          var ground = land.create(offsetX*64, offsetY*64, 'paleEarth');
+        }
+        else if (rockType == 2 && player.y <= 64000) {
+          var ground = land.create(offsetX*64, offsetY*64, 'greyEarth');
+        }
+        // Hell Depth
+        else if (rockType > 0 && player.y > 64000) {
+          var ground = land.create(offsetX*64, offsetY*64, 'hellEarth2');
+        }
+        else if (player.y > 64000) {
+          var ground = land.create(offsetX*64, offsetY*64, 'hellEarth');
+        }
+        else {
+          var ground = land.create(offsetX*64, offsetY*64, 'earth'); // Regular land
         }
         ground.body.immovable = true;
       }
