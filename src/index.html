@@ -4,6 +4,8 @@
         <meta charset="UTF-8" />
         <title>hello phaser!</title>
         <link rel="stylesheet" type="text/css" href="css/styles.css">
+        <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <script src="js/phaser.min.js"></script>
         <script src="js/perlin.js"></script>
         <script src="js/controls.js"></script>
@@ -12,15 +14,26 @@
         <script src="js/main.js"></script>
     </head>
     <body>
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-1 left">Left Meter</div>
-          <div class="col-xs-10" id="game"></div>
-          <div class="col-xs-1 right">Right Meter</div>
+
+      <div class="primary">
+        <div class="health">
+          <div id="health-bar"></div>
+        </div>
+        <div id="game"></div>
+        <div class="right">
+          <div class="bar">
+            <div class="circle" id="depth-circle"></div>
+          </div>
+        </div>
+        <div class="score-tag">
+
+          <ul class="tags">
+            <li id="score-tag-elem"><a>0 KM</a></li> <!-- Yea, its a anchor elem. Can figure out how to fix -->
+          </ul>
+
         </div>
       </div>
 
 
     </body>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
 </html>

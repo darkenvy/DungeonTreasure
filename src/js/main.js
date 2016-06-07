@@ -22,13 +22,13 @@ var scoreText;
 var totalHurts = 0;
 var totalCollects = 0;
 var health = 100;
-var healthText;
+// var healthText;
 var healthCooldown = 0;
 var willFallDamage = false;
 var timer = 125;
 // var timerText;
 var depth = 0;
-var depthText;
+// var depthText;
 var currBlackness = 0.0;
 
 var vignette;
@@ -110,15 +110,15 @@ function create() {
   // Setup screen texts & vignette
   vignette = game.add.sprite(0, 0, 'dark');
   blackness = game.add.sprite(0, 0, 'blackness');
-  healthText = game.add.text(0, 0, 'health: 100%', { fontSize: '20px', fill: '#fff' });
-  depthText = game.add.text(0, 0, 'Depth [ 0m ]', { fontSize: '20px', fill: '#fff' });
+  // healthText = game.add.text(0, 0, 'health: 100%', { fontSize: '20px', fill: '#fff' });
+  // depthText = game.add.text(0, 0, 'Depth [ 0m ]', { fontSize: '20px', fill: '#fff' });
   // timerText = game.add.text(0, 0, '120', { fontSize: '12px', fill: '#e46' });
   scoreText = game.add.text(0, 0, 'Score: ', { fontSize: '20px', fill: '#fff' });
   vignette.alpha = 0.8;
   game.time.events.repeat(Phaser.Timer.SECOND * 1, 100000, tictoc, this);
   game.time.events.repeat(Phaser.Timer.SECOND * 10, 100000, function() {
     if (health < 100) { health += 1;}
-    healthText.text = 'health: ' + health + '%';
+    // healthText.text = 'health: ' + health + '%';
   }, this);
   game.time.events.repeat(1, 100000000, function() {
     if (timer > 0.5) {
@@ -165,7 +165,7 @@ function update() {
       totalHurts += 1;
       player.body.velocity.y = -300;
       healthCooldown = 3;
-      healthText.text = 'health: ' + health + '%';
+      // healthText.text = 'health: ' + health + '%';
     }
     return false;
   });
@@ -222,7 +222,7 @@ function fallDamage() {
     healthCooldown = 2;
     health -= 20;
     totalHurts += 1;
-    healthText.text = 'health: ' + health + '%';
+    // healthText.text = 'health: ' + health + '%';
   }
 }
 
@@ -251,6 +251,20 @@ function tictoc() {
     if (Math.abs(stars.children[i].y - player.y) > 3200) {
       stars.children[i].destroy();
     }
+  }
+
+  // Update out-of-canvas elements
+  if (depth < 1000) {
+    $('#depth-circle').attr('style','top: ' + (Math.floor(depth / 1.81) - 10) + 'px');
+    $('.score-tag').attr('style','margin-top: ' + (Math.floor(depth / 1.81) + 13) + 'px');
+    $('#score-tag-elem').html('<a>' + depth + ' Meters</a>')
+  } else {
+    $('#score-tag-elem').html('<a>' + depth/1000 + ' Km</a>')
+  }
+  if (health > 0 && health <= 100) {
+    $('#health-bar').attr('style','width: ' + Math.floor(health * 8) + 'px');
+  } else {
+    $('#health-bar').attr('style','width: ' + 0 + 'px');
   }
 
 }
