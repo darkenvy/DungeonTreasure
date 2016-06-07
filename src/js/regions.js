@@ -85,21 +85,32 @@ function spawnRegion(regionX, regionY) {
       starNum = Math.floor(starNum * 8);
       snakeNum = Math.floor(snakeNum * 8);
 
-      if (cellNum != 3 && cellNum != 4) {
-        if (cellNum == 1){
+      // offsetY > 4 is for the first tile of the game. So he is not undeground
+      if (cellNum != 3 && cellNum != 4 && offsetY > 4) {
+        if (cellNum == 1 && offsetY != 4){
           var ground = land.create(offsetX*64, offsetY*64, 'darkEarth');
+        } else if (offsetY == 5){
+          var ground = land.create(offsetX*64, offsetY*64, 'earthgrass');
+          console.log("earthgrass");
         } else {
           var ground = land.create(offsetX*64, offsetY*64, 'earth');
         }
         ground.body.immovable = true;
       }
-
-      if (cellNum == 3 && starNum == 1) {
-        var star = stars.create((offsetX*64)+32, (offsetY*64)+32, 'star');
-        star.body.gravity.y = 300;
-        star.body.bounce.y = 0.7 + Math.random() * 0.2;
+      // Create background tiles
+      if ((cellNum == 3 || cellNum == 4) && offsetY > 4) {
+        var bg = background.create(offsetX*64, offsetY*64, 'background');
+      } else if (offsetY <= 4) {
+        var bgsky = background.create(offsetX*64, offsetY*64, 'backgroundsky');
       }
-      if (cellNum == 3 && snakeNum == 1) {
+
+      // Create stars
+      if (cellNum == 3 && starNum == 1) {
+        var star = stars.create((offsetX*64), (offsetY*64), 'star');
+        // star.body.gravity.y = 300;
+        // star.body.bounce.y = 0.7 + Math.random() * 0.2;
+      }
+      if (cellNum == 3 && snakeNum == 1 && offsetY > 4) {
         //  Create a snake inside of the 'snakes' group
         var snake = snakes.create( (offsetX*64), (offsetY*64), 'snake');
         snake.animations.add('left', [0, 1, 2, 3], 10, true);
@@ -119,7 +130,7 @@ function spawnRegion(regionX, regionY) {
 
 
 function removeRegionLoaded(region, selector) {
-  console.log("destroyed");
+  // console.log("destroyed");
   for (var i=0; i<regionsLoaded.length; i++) {
     if (regionsLoaded[i].split(',')[selector] == region) {
       regionsLoaded.splice(i, 1);
@@ -128,3 +139,22 @@ function removeRegionLoaded(region, selector) {
     }
   }
 }
+
+// function removeTopRegion() {
+//   console.log("removeTop");
+//   // This function should only run once. However,
+//   // Only do this if regions of [,0] are loaded
+//   for (var i=0; i<regionsLoaded.length ; i++) {
+//     if (regionsLoaded[i].split(',')[1] == 0) {
+//       console.log("inside1");
+//       // Destroy land above the 272px mark
+//       for (var j=0; j<land.children.length; j++) {
+//         if (land.children[j].y < 272) {
+//           console.log("inside2");
+//           land.children[j].destroy();
+//         }
+//       }
+//     }
+//   }
+
+// }

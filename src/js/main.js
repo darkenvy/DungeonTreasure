@@ -1,8 +1,8 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, '', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
 
 // Land Variables
 var region = [60,0]; // Region is a offset for the Perlin generator. Split inf loading into chunks for management.
-var regionsLoaded = ["0,0"]; // regionsLoaded is stored as strings as a bugfix
+var regionsLoaded = ["60,0"]; // regionsLoaded is stored as strings as a bugfix
 var land;
 
 // Physics variables
@@ -26,7 +26,7 @@ var healthText;
 var healthCooldown = 0;
 var willFallDamage = false;
 var timer = 125;
-var timerText;
+// var timerText;
 var depth = 0;
 var depthText;
 var currBlackness = 0.0;
@@ -48,11 +48,15 @@ function preload() {
   game.load.image('sky', 'assets/tests/sky.png');
   game.load.image('ground', 'assets/sprites/platform.png');
   game.load.image('earth', 'img/earth.png', 64, 64);
+  game.load.image('earthgrass', 'img/earthgrass.png', 64, 64);
   game.load.image('darkEarth', 'img/dark-earth.png', 64, 64);
+  game.load.image('background', 'img/background.png', 64, 64);
+  game.load.image('backgroundsky', 'img/nightsky.png', 64, 64);
   game.load.image('dark', 'img/dark.png', 64, 64);
   game.load.image('blackness', 'img/blackness.jpg', 64, 64);
   game.load.image('destroy', 'img/destroy.png', 16, 16);
-  game.load.image('star', 'assets/games/starstruck/star.png');
+  // game.load.image('star', 'assets/games/starstruck/star.png');
+  game.load.image('star', 'img/ore.png', 64, 64);
   game.load.spritesheet('snake', 'img/snake.png', 64, 48);
   game.load.spritesheet('dude', 'assets/games/starstruck/dude.png', 32, 48);
   game.load.spritesheet('bomb', 'img/BombExploding.png', 32, 64);
@@ -73,6 +77,7 @@ function create() {
   // Group creation for physical objects. Enable body for collision methods
   land = game.add.group(); // land is now a group that contains all collidable tiles
   land.enableBody = true; // Give land the .body tag
+  background = game.add.group();
   stars = game.add.group();
   stars.enableBody = true;
   bombs = game.add.group();
@@ -107,18 +112,18 @@ function create() {
   blackness = game.add.sprite(0, 0, 'blackness');
   healthText = game.add.text(0, 0, 'health: 100%', { fontSize: '20px', fill: '#fff' });
   depthText = game.add.text(0, 0, 'Depth [ 0m ]', { fontSize: '20px', fill: '#fff' });
-  timerText = game.add.text(0, 0, '120', { fontSize: '12px', fill: '#e46' });
+  // timerText = game.add.text(0, 0, '120', { fontSize: '12px', fill: '#e46' });
   scoreText = game.add.text(0, 0, 'Score: ', { fontSize: '20px', fill: '#fff' });
   vignette.alpha = 0.8;
   game.time.events.repeat(Phaser.Timer.SECOND * 1, 100000, tictoc, this);
-  game.time.events.repeat(Phaser.Timer.SECOND * 3, 100000, function() {
+  game.time.events.repeat(Phaser.Timer.SECOND * 10, 100000, function() {
     if (health < 100) { health += 1;}
     healthText.text = 'health: ' + health + '%';
   }, this);
   game.time.events.repeat(1, 100000000, function() {
     if (timer > 0.5) {
       timer -= 0.01;
-      timerText.text = timer;
+      // timerText.text = timer;
     }
   }, this);
 
@@ -150,7 +155,7 @@ function update() {
     }
   });
   game.physics.arcade.overlap(player, stars, collectStar, null, this); //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-  if (player.body.velocity.y > 600 && willFallDamage == false) {
+  if (player.body.velocity.y > 750 && willFallDamage == false) {
     console.log("ahhh");
     willFallDamage = true;
   }
@@ -202,7 +207,10 @@ function update() {
   controls(); // Located in controls.js
   regionManagement(); // Located in regions.js
 
-
+  if (health < 1) {
+    timer = 1;
+    healthCooldown = 9001;
+  }
 }
 
 
@@ -212,7 +220,7 @@ function fallDamage() {
   if (willFallDamage) {
     willFallDamage = false;
     healthCooldown = 2;
-    health -= 10;
+    health -= 20;
     totalHurts += 1;
     healthText.text = 'health: ' + health + '%';
   }
@@ -232,13 +240,26 @@ function tictoc() {
     // console.log(vignette.alpha, blackness.alpha);
   }
 
+  // Destroy snakes if 3200px away (2 regions)
+  for (var i=0; i<snakes.children.length; i++) {
+    if (Math.abs(snakes.children[i].y - player.y) > 3200) {
+      snakes.children[i].destroy();
+    }
+  }
+  // Destroy stars if 3200px away (2 regions)
+  for (var i=0; i<stars.children.length; i++) {
+    if (Math.abs(stars.children[i].y - player.y) > 3200) {
+      stars.children[i].destroy();
+    }
+  }
+
 }
 
 function collectStar (player, star) {
 
     // Removes the star from the screen
     star.kill();
-    timer += 5;
+    timer += 10;
     totalCollects += 1;
 }
 
