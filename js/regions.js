@@ -91,7 +91,6 @@ function spawnRegion(regionX, regionY) {
           var ground = land.create(offsetX*64, offsetY*64, 'darkEarth');
         } else if (offsetY == 5){
           var ground = land.create(offsetX*64, offsetY*64, 'earthgrass');
-          console.log("earthgrass");
         } else {
           var ground = land.create(offsetX*64, offsetY*64, 'earth');
         }

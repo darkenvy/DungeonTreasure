@@ -30,6 +30,7 @@ var timer = 125;
 var depth = 0;
 // var depthText;
 var currBlackness = 0.0;
+var fallDmgWarning = 0;
 
 var vignette;
 var blackness;
@@ -158,6 +159,8 @@ function update() {
   if (player.body.velocity.y > 750 && willFallDamage == false) {
     console.log("ahhh");
     willFallDamage = true;
+  } else if (player.body.velocity.y <= 750 && willFallDamage == true) {
+    willFallDamage = false;
   }
   game.physics.arcade.collide(player, snakes, null, function(p,s) {
     if (healthCooldown == 0) {
@@ -211,6 +214,17 @@ function update() {
     timer = 1;
     healthCooldown = 9001;
   }
+
+  if (player.body.velocity.y > 600 && fallDmgWarning < 1) {
+    console.log("wfd", fallDmgWarning);
+    fallDmgWarning += 0.1;
+    $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')')
+  } else if (willFallDamage == false && fallDmgWarning > 0) {
+    fallDmgWarning -= 0.1;
+    $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')')
+  }
+
+
 }
 
 
@@ -222,6 +236,7 @@ function fallDamage() {
     healthCooldown = 2;
     health -= 20;
     totalHurts += 1;
+    tictoc();
     // healthText.text = 'health: ' + health + '%';
   }
 }
@@ -262,6 +277,7 @@ function tictoc() {
     $('#score-tag-elem').html('<a>' + depth/1000 + ' Km</a>')
   }
   if (health > 0 && health <= 100) {
+    // Change these to .css() eventually
     $('#health-bar').attr('style','width: ' + Math.floor(health * 8) + 'px');
   } else {
     $('#health-bar').attr('style','width: ' + 0 + 'px');

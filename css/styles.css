@@ -28,6 +28,7 @@ body {
   vertical-align: top;
   width: 800px;
   height: 625px;
+  box-shadow: 0 0 50px 1px rgba(255,153,0, 0);
 }
 
 .right {
