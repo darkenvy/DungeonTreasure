@@ -79,9 +79,11 @@ function spawnRegion(regionX, regionY) {
       // Call Perlin noise and pass in offset coords
       cellNum = pn.noise(offsetX/4, offsetY/4, 0);
       starNum = pn.noise(offsetX/4, offsetY/4, 0.5);
+      snakeNum = pn.noise(offsetX/4, offsetY/4, 0.5);
       // Perlin maps to float between 0-1, multiply to get range 0-5
       cellNum = Math.floor(cellNum * 6);
-      starNum = Math.floor(starNum * 10);
+      starNum = Math.floor(starNum * 8);
+      snakeNum = Math.floor(snakeNum * 8);
 
       if (cellNum != 3 && cellNum != 4) {
         if (cellNum == 1){
@@ -94,9 +96,22 @@ function spawnRegion(regionX, regionY) {
 
       if (cellNum == 3 && starNum == 1) {
         var star = stars.create((offsetX*64)+32, (offsetY*64)+32, 'star');
-        // star.body.gravity.y = 300;
-        // star.body.bounce.y = 0.7 + Math.random() * 0.2;
+        star.body.gravity.y = 300;
+        star.body.bounce.y = 0.7 + Math.random() * 0.2;
       }
+      if (cellNum == 3 && snakeNum == 1) {
+        //  Create a snake inside of the 'snakes' group
+        var snake = snakes.create( (offsetX*64), (offsetY*64), 'snake');
+        snake.animations.add('left', [0, 1, 2, 3], 10, true);
+        snake.animations.add('right', [4, 5, 6, 7], 10, true);
+
+        //  Let gravity do its thing
+        snake.body.gravity.y = 300;
+        // snake.body.collideWorldBounds=true;
+        snake.body.velocity.x = 150;
+        snake.animations.play('right');
+      }
+
     }
   }
 
@@ -108,7 +123,7 @@ function removeRegionLoaded(region, selector) {
   for (var i=0; i<regionsLoaded.length; i++) {
     if (regionsLoaded[i].split(',')[selector] == region) {
       regionsLoaded.splice(i, 1);
-      console.log(land.length);
+      // console.log(land.length);
       // console.log(regionsLoaded, i);
     }
   }
