@@ -49,8 +49,12 @@ function preload() {
   game.load.image('sky', 'assets/tests/sky.png');
   game.load.image('ground', 'assets/sprites/platform.png');
   game.load.image('earth', 'img/earth.png', 64, 64);
+  game.load.image('paleEarth', 'img/paleearth.png', 64, 64);
   game.load.image('earthgrass', 'img/earthgrass.png', 64, 64);
   game.load.image('darkEarth', 'img/dark-earth.png', 64, 64);
+  game.load.image('greyEarth', 'img/greyearth.png', 64, 64);
+  game.load.image('hellEarth', 'img/hellearth.png', 64, 64);
+  game.load.image('hellEarth2', 'img/hellearth2.png', 64, 64);
   game.load.image('background', 'img/background.png', 64, 64);
   game.load.image('backgroundsky', 'img/nightsky.png', 64, 64);
   game.load.image('dark', 'img/dark.png', 64, 64);
@@ -68,12 +72,12 @@ function preload() {
 
 function create() {
   // Define world boundries, land and initial spawn
-  game.world.setBounds(0, 0, 192000, 192000);
+  game.world.setBounds(0, 0, 192000, 640000);
   game.time.desiredFps = 30;
   game.renderer.renderSession.roundPixels = true;
 
   music = game.add.audio('boden');
-  // music.play();
+  music.play();
 
   // Group creation for physical objects. Enable body for collision methods
   land = game.add.group(); // land is now a group that contains all collidable tiles
@@ -88,15 +92,14 @@ function create() {
   snakes = game.add.group();
   snakes.enableBody = true;
 
-  // Create the starter region (only runs once at this point)
-  spawnRegion(region[0], region[1]);
-
   //  Add a sprite with animations & directions
   player = game.add.sprite(96540,100, 'dude');
   player.animations.add('left', [0, 1, 2, 3], 10, true);
   player.animations.add('turn', [4], 20, true);
   player.animations.add('right', [5, 6, 7, 8], 10, true);
 
+  // Create the starter region (only runs once at this point)
+  spawnRegion(region[0], region[1]);
 
   // Physics Enable
   game.physics.startSystem(Phaser.Physics.ARCADE);
@@ -215,8 +218,9 @@ function update() {
     healthCooldown = 9001;
   }
 
+
+  // Fall damage aura warning
   if (player.body.velocity.y > 600 && fallDmgWarning < 1) {
-    console.log("wfd", fallDmgWarning);
     fallDmgWarning += 0.1;
     $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')')
   } else if (willFallDamage == false && fallDmgWarning > 0) {
