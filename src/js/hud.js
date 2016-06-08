@@ -8,10 +8,10 @@ function hud() {
   // timerText.y = game.camera.y + 30;
   // depthText.x = game.camera.x + 650;
   // depthText.y = game.camera.y + 30;
-  depth = Math.floor(player.y/64) - 4;
+  depth = Math.floor(player.y / 64) - 4;
   // depthText.text = "Depth [ " + depth + "m ]";
   score = depth + (totalCollects * 20) - (totalHurts * 20);
-  scoreText.text = "Score: " + score;
+  scoreText.text = 'Score: ' + score;
 
   vignette.x = game.camera.x - 25; // 25 pixels on each side for overscan
   vignette.y = game.camera.y - 25;
@@ -22,13 +22,13 @@ function hud() {
   if ((vignette.alpha <= currBlackness) && timer <= 180) {
     vignette.alpha += 0.005;
   } else {
-    vignette.alpha -= (Math.random()/10)
+    vignette.alpha -= (Math.random() / 10);
   }
   // Blackness & Vignette darkening
   if (timer <= 180 && timer > 0) {
-    vignette.alpha = 1 - (timer/180);
+    vignette.alpha = 1 - (timer / 180);
     if (timer <= 10) {
-      blackness.alpha = 1 - (timer/10);
+      blackness.alpha = 1 - (timer / 10);
     }
   }
 
