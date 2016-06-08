@@ -2,22 +2,58 @@
 <html>
 <head>
   <title>Music</title>
-  <script type="text/javascript" src="js/Core.js"></script>
-  <script type="text/javascript" src="js/Soundblaster.js"></script>
-  <script type="text/javascript" src="js/F2Player.js"></script>
-  <script>
-    console.log('loaded');
-    loader = window.neoart.FileLoader
-    // reader = new FileReader();
-    // reader.onload = function() {
-    player = loader.load('Blz_-_May.xm');
-    player.play();
-      // reader.readAsArrayBuffer(file);
-    // }
+  <script type="text/javascript" src="https://code.jquery.com/jquery-2.2.4.min.js"></script>
+  <!-- Latest compiled and minified CSS -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 
+  <!-- Optional theme -->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
+
+  <!-- Latest compiled and minified JavaScript -->
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script>
+  <script>
   </script>
 </head>
 <body>
 
+  <!-- Button trigger modal -->
+  <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#myModal">
+    Launch demo modal
+  </button>
+
+  <!-- Modal -->
+  <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+          <h4 class="modal-title" id="myModalLabel">Dungeon Explorer</h4>
+        </div>
+
+        <div class="modal-body">
+          <div class="row">
+            <div class="col-xs-8 col-sm-8 col-md-8 col-lg-8">
+              <h4>How to Play</h4>
+              Get as far down in the earth as possible before your all light from your torch is extinguished. Collecting coal can provide additional fuel for your light-source, however be warned that utilizing bombs or using the jet-pack only further diminishes your rather limited supply. How far down can <i>you</i> get?
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-4 col-lg-4">
+              <h4>Controls</h4>
+              <div class="row">Hover - Spacebar</div>
+              <div class="row">Jump - Up Arrow</div>
+              <div class="row">Move - Left/Right Arrows</div>
+              <div class="row">Bomb - Down Arrow</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+          <button type="button" class="btn btn-primary">Save changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-modal/2.2.6/js/bootstrap-modal.min.js"></script> -->
 </body>
 </html>

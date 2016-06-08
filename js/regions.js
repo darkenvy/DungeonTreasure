@@ -1,73 +1,4 @@
 // Need to replace star destruction
-  // Destroy stars if traveling too fast
-  // for (var i=0; i< stars.children.length; i++) {
-  //   if (stars.children[i].body.velocity.y > 200) {
-  //     stars.children[i].destroy();
-  //   }
-  // }
-
-function regionManagement() {
-  // ================= Load upcoming area ===================== //
-  // dont forget to upscale when I 'zoom-in' the level
-  if ((player.x % 1600 ) < 100) {
-    // If the next region (right) is not inside 'regionsLoaded' then load and add to list
-    if (regionsLoaded.indexOf((region[0]-1).toString() + ',' + region[1].toString() ) == -1){
-      regionsLoaded.push((region[0]-1).toString() + ',' + region[1].toString());
-      console.log(regionsLoaded);
-      spawnRegion(region[0]-1, region[1]);
-    }
-  }
-  if ((player.x % 1600 ) > 700) {
-    // If the next region (left) is not inside 'regionsLoaded' then load and add to list
-    if (regionsLoaded.indexOf((region[0]+1).toString() + ',' + region[1].toString() ) == -1){
-      regionsLoaded.push((region[0]+1).toString() + ',' + region[1].toString());
-      console.log(regionsLoaded);
-      spawnRegion(region[0]+1, region[1]);
-    }
-  }
-
-  if ((player.y % 1600 ) < 100) {
-    // If the next region (upwards) is not inside 'regionsLoaded' then load and add to list
-    if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]-1).toString() ) == -1){
-      regionsLoaded.push(region[0].toString() + ',' + (region[1]-1).toString());
-      console.log(regionsLoaded);
-      spawnRegion(region[0], region[1]-1);
-    }
-  }
-  if ((player.y % 1600 ) > 700) {
-    // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
-    if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]+1).toString() ) == -1){
-      regionsLoaded.push(region[0].toString() + ',' + (region[1]+1).toString());
-      console.log(regionsLoaded);
-      spawnRegion(region[0], region[1]+1);
-    }
-  }
-
-  // ======================== Cleanup ========================= //
-  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
-  land.forEach(function(piece) {
-    if (Math.floor(piece.x / 1600) == region[0]-2) {
-      removeRegionLoaded(region[0]-2, 0);
-      piece.destroy();
-    }
-    if (Math.floor(piece.x / 1600) == region[0]+2) {
-      removeRegionLoaded(region[0]+2, 0);
-      piece.destroy();
-    }
-    if (Math.floor(piece.y / 1600) == region[1]-2) {
-      removeRegionLoaded(region[1]-2, 1);
-      piece.destroy();
-    }
-    if (Math.floor(piece.y / 1600) == region[1]+2) {
-      removeRegionLoaded(region[1]+2, 1);
-      piece.destroy();
-    }
-
-  })
-
-
-
-}
 
 function spawnRegion(regionX, regionY) {
   // Perlin noise returns a float between 0-1.
@@ -96,17 +27,17 @@ function spawnRegion(regionX, regionY) {
         else if (offsetY == 5) {
           var ground = land.create(offsetX*64, offsetY*64, 'earthgrass');
         }
-        else if (rockType == 1 && player.y <= 64000) {
+        else if (rockType == 1 && player.y <= 32000) {
           var ground = land.create(offsetX*64, offsetY*64, 'paleEarth');
         }
-        else if (rockType == 2 && player.y <= 64000) {
+        else if (rockType == 2 && player.y <= 32000) {
           var ground = land.create(offsetX*64, offsetY*64, 'greyEarth');
         }
         // Hell Depth
         else if (rockType > 0 && player.y > 64000) {
           var ground = land.create(offsetX*64, offsetY*64, 'hellEarth2');
         }
-        else if (player.y > 64000) {
+        else if (player.y > 32000) {
           var ground = land.create(offsetX*64, offsetY*64, 'hellEarth');
         }
         else {
@@ -146,6 +77,73 @@ function spawnRegion(regionX, regionY) {
 }
 
 
+
+function regionManagement() {
+  // ================= Load upcoming area ===================== //
+  // dont forget to upscale when I 'zoom-in' the level
+  if ((player.x % 1600 ) < 100) {
+    // If the next region (right) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf((region[0]-1).toString() + ',' + region[1].toString() ) == -1){
+      regionsLoaded.push((region[0]-1).toString() + ',' + region[1].toString());
+      console.log(regionsLoaded,regionsLoaded.length, land.children.length, 'snakes:', snakes.children.length);
+      spawnRegion(region[0]-1, region[1]);
+    }
+  }
+  if ((player.x % 1600 ) > 700) {
+    // If the next region (left) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf((region[0]+1).toString() + ',' + region[1].toString() ) == -1){
+      regionsLoaded.push((region[0]+1).toString() + ',' + region[1].toString());
+      console.log(regionsLoaded,regionsLoaded.length, land.children.length, 'snakes:', snakes.children.length);
+      spawnRegion(region[0]+1, region[1]);
+    }
+  }
+
+  if ((player.y % 1600 ) < 100) {
+    // If the next region (upwards) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]-1).toString() ) == -1){
+      regionsLoaded.push(region[0].toString() + ',' + (region[1]-1).toString());
+      console.log(regionsLoaded,regionsLoaded.length, land.children.length, 'snakes:', snakes.children.length);
+      spawnRegion(region[0], region[1]-1);
+    }
+  }
+  if ((player.y % 1600 ) > 700) {
+    // If the next region (downwards) is not inside 'regionsLoaded' then load and add to list
+    if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1]+1).toString() ) == -1){
+      regionsLoaded.push(region[0].toString() + ',' + (region[1]+1).toString());
+      console.log(regionsLoaded,regionsLoaded.length, land.children.length, 'snakes:', snakes.children.length);
+      spawnRegion(region[0], region[1]+1);
+    }
+  }
+
+  // ======================== Cleanup ========================= //
+  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
+  // This procedure only removes pieces in a perimeter around the player.
+  // I think there is a leak as over time the game gets slower & more chunks loaded.
+  land.forEach(function(piece) {
+    if (Math.floor(piece.x / 1600) == region[0]-2) {
+      removeRegionLoaded(region[0]-2, 0);
+      piece.destroy();
+    }
+    if (Math.floor(piece.x / 1600) == region[0]+2) {
+      removeRegionLoaded(region[0]+2, 0);
+      piece.destroy();
+    }
+    if (Math.floor(piece.y / 1600) == region[1]-2) {
+      removeRegionLoaded(region[1]-2, 1);
+      piece.destroy();
+    }
+    if (Math.floor(piece.y / 1600) == region[1]+2) {
+      removeRegionLoaded(region[1]+2, 1);
+      piece.destroy();
+    }
+
+  })
+
+
+
+}
+
+
 function removeRegionLoaded(region, selector) {
   // console.log("destroyed");
   for (var i=0; i<regionsLoaded.length; i++) {
@@ -156,3 +154,13 @@ function removeRegionLoaded(region, selector) {
     }
   }
 }
+
+
+// function deepCleanse() {
+//   regionsLoaded.forEach(function(regPair) {
+//     // If the player is 3 chunks away (vertically) than a loaded chunk, unload it
+//     if ((regionsLoaded[i].split(',')[1] * 25 * 64) + player.y > 4800 ) {
+
+//     }
+//   })
+// }
