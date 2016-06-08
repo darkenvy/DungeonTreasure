@@ -22,15 +22,13 @@ var scoreText;
 var totalHurts = 0;
 var totalCollects = 0;
 var health = 100;
-// var healthText;
 var healthCooldown = 0;
 var willFallDamage = false;
-var timer = 125;
-// var timerText;
+var timer = 120;
 var depth = 0;
-// var depthText;
 var currBlackness = 0.0;
 var fallDmgWarning = 0;
+var isPopup = true;
 
 var vignette;
 var blackness;
@@ -143,6 +141,27 @@ function create() {
 // ====================================================== //
 
 function update() {
+  // If the popup is up, reset the timer constantly
+  if (isPopup == true) {
+    // Failsafe incase of glitch with popup
+    if (player.body.velocity.x !=0) {isPopup = false;console.log("test");}
+    timer = 120;
+    console.log(timer);
+  }
+  $('#replay').click(function(){
+    region.push("60,0");
+    player.x = 96540;
+    player.y = 100;
+    health = 100;
+    timer = 120;
+    score = 0;
+    totalHurts = 0;
+    totalCollects = 0;
+    healthCooldown = 0;
+    willFallDamage = false;
+    depth = 0;
+    currBlackness = 0.0;
+  })
 
   // Keep region info up to date
   region[0] = Math.floor(player.x / 1600);
@@ -214,9 +233,10 @@ function update() {
   controls(); // Located in controls.js
   regionManagement(); // Located in regions.js
 
-  if (health < 1) {
+  if (health < 1 || timer < 0.5) {
     timer = 1;
     healthCooldown = 9001;
+    $('#myScore').modal();
   }
 
 
@@ -301,7 +321,7 @@ function collectStar (player, star) {
 function explode() {
   // destructor wont clean up all the way. bug. Should not be a problem.
   for (i=0; i<destructor.children.length; i++) {
-    console.log(i);
+    // console.log(i);
     destructor.children[i].destroy();
   }
   // remember, the sprite is technically 50px above the player.
@@ -315,5 +335,5 @@ function explode() {
   destroy7 = destructor.create( bombs.children[0].x + 50, bombs.children[0].y + 100, 'destroy');
   destroy8 = destructor.create( bombs.children[0].x - 50, bombs.children[0].y + 100, 'destroy');
   bombs.children[0].destroy();
-  console.log("exploded");
+  // console.log("exploded");
 }
