@@ -76,8 +76,9 @@ function create() {
   game.time.desiredFps = 30;
   game.renderer.renderSession.roundPixels = true;
 
+  // Music - needs to loop
   music = game.add.audio('boden');
-  music.play();
+  // music.play();
 
   // Group creation for physical objects. Enable body for collision methods
   land = game.add.group(); // land is now a group that contains all collidable tiles

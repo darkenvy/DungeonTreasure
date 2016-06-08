@@ -156,22 +156,3 @@ function removeRegionLoaded(region, selector) {
     }
   }
 }
-
-// function removeTopRegion() {
-//   console.log("removeTop");
-//   // This function should only run once. However,
-//   // Only do this if regions of [,0] are loaded
-//   for (var i=0; i<regionsLoaded.length ; i++) {
-//     if (regionsLoaded[i].split(',')[1] == 0) {
-//       console.log("inside1");
-//       // Destroy land above the 272px mark
-//       for (var j=0; j<land.children.length; j++) {
-//         if (land.children[j].y < 272) {
-//           console.log("inside2");
-//           land.children[j].destroy();
-//         }
-//       }
-//     }
-//   }
-
-// }
