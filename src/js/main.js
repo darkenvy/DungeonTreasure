@@ -128,7 +128,7 @@ function create() {
     // healthText.text = 'health: ' + health + '%';
   }, this);
   game.time.events.repeat(1, 100000000, function() {
-    if (timer > 0.5) {
+    if (timer > 0.5 && health > 1) {
       timer -= 0.01;
       // timerText.text = timer;
     }
@@ -233,9 +233,14 @@ function update() {
   regionManagement(); // Located in regions.js
 
   if (health < 1 || timer < 0.5) {
-    timer = 1;
-    healthCooldown = 9001;
+    $('#scoreList :nth-child(1)').text('Depth: ' + depth);
+    $('#scoreList :nth-child(2)').text('Ore Collected: ' + totalCollects);
+    $('#scoreList :nth-child(3)').text('Dmg Taken: ' + totalHurts * 12 + ' HP');
+    $('#scoreList :nth-child(4)').text('Time Remaining: ' + Math.floor(timer) + ' sec');
     $('#myScore').modal();
+    $('#finalScore').text( score + Math.floor(timer));
+    // timer = 1;
+    healthCooldown = 9001;
   }
 
 

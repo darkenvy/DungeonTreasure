@@ -3,6 +3,7 @@
 function spawnRegion(regionX, regionY) {
   // Perlin noise returns a float between 0-1.
   var pn = new Perlin('Reno');
+  // var pn = new Perlin(Math.random());
   for (var y = 0; y < 25; y++) {
     for (var x = 0; x < 25; x++) {
       var offsetX = (regionX * 25) + x;
@@ -10,32 +11,37 @@ function spawnRegion(regionX, regionY) {
       // Call Perlin noise and pass in offset coords
       cellNum = pn.noise(offsetX / 4, offsetY / 4, 0);
       rockType = pn.noise(offsetX / 30, offsetY / 30, 0.25);
+      specNum = pn.noise(offsetX / 30, offsetY / 30, 0.7); // used for cavities atm
       starNum = pn.noise(offsetX / 4, offsetY / 4, 0.5);
-      snakeNum = pn.noise(offsetX / 4, offsetY / 4, 0.5);
+      snakeNum = pn.noise(offsetX / 4, offsetY / 4, 0.4);
       // Perlin maps to float between 0-1, multiply to get range 0-5
       cellNum = Math.floor(cellNum * 6);
       rockType = Math.floor(rockType * 3);
+      specNum = Math.floor(specNum * 10);
       starNum = Math.floor(starNum * 8);
       snakeNum = Math.floor(snakeNum * 8);
 
       // offsetY > 4 is for the first tile of the game. So he is not undeground
       if (cellNum !== 3 && cellNum !== 4 && offsetY > 4) {
         // Different states of land, mapped out via the Perlin noise
-        if (cellNum === 1 && offsetY !== 4) {
+        if (specNum < 7 && cellNum === 1 && offsetY !== 4) {
           ground = land.create(offsetX * 64, offsetY * 64, 'darkEarth');
-        } else if (offsetY === 5) {
+        } else if (specNum < 7 && offsetY === 5) {
           ground = land.create(offsetX * 64, offsetY * 64, 'earthgrass');
-        } else if (rockType === 1 && player.y <= 32000) {
+        } else if (specNum < 7 && rockType === 1 && player.y <= 32000) {
           ground = land.create(offsetX * 64, offsetY * 64, 'paleEarth');
-        } else if (rockType === 2 && player.y <= 32000) {
+        } else if (specNum < 7 && rockType === 2 && player.y <= 32000) {
           ground = land.create(offsetX * 64, offsetY * 64, 'greyEarth');
-        } else if (rockType > 0 && player.y > 64000) {
-          // Hell Depth
-          ground = land.create(offsetX * 64, offsetY * 64, 'hellEarth2');
-        } else if (player.y > 32000) {
-          ground = land.create(offsetX * 64, offsetY * 64, 'hellEarth');
-        } else {
+        } else if (specNum < 7 && rockType > 0 && player.y > 64000) {
+          ground = land.create(offsetX * 64, offsetY * 64, 'hellEarth2'); // Hell Depth2
+        } else if (specNum < 7 && player.y > 32000) {
+          ground = land.create(offsetX * 64, offsetY * 64, 'hellEarth'); // Hell Depth
+        } else if (specNum < 7) {
           ground = land.create(offsetX * 64, offsetY * 64, 'earth'); // Regular land
+        } else {
+          // This is a bugfix. We obviously dont want lands at 0,0 but without this
+          // the game refuses to start in certain cases
+          ground = land.create(0,0, 'earth');
         }
         ground.body.immovable = true;
       }
