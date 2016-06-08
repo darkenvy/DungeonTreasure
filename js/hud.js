@@ -31,6 +31,4 @@ function hud() {
       blackness.alpha = 1 - (timer / 10);
     }
   }
-
-
 }

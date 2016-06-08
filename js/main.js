@@ -3,7 +3,8 @@ var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
   create: create, update: update });
 
 // Land Variables
-var region = [60, 0]; // Region is a offset for the Perlin generator. Split inf loading into chunks for management.
+// Region is a offset for the Perlin generator. Split inf loading into chunks for management.
+var region = [60, 0];
 var regionsLoaded = ['60,0']; // regionsLoaded is stored as strings as a bugfix
 var land;
 var ground;
@@ -132,8 +133,6 @@ function create() {
       // timerText.text = timer;
     }
   }, this);
-
-
 }
 
 
@@ -145,11 +144,10 @@ function create() {
 
 function update() {
   // If the popup is up, reset the timer constantly
-  if (isPopup == true) {
+  if (isPopup === true) {
     // Failsafe incase of glitch with popup
-    if (player.body.velocity.x != 0) { isPopup = false; console.log('test'); }
+    if (player.body.velocity.x !== 0) { isPopup = false; }
     timer = 120;
-    console.log(timer);
   }
   $('#replay').click(function() {
     region.push('60,0');
@@ -177,19 +175,19 @@ function update() {
   game.physics.arcade.collide(snakes, land);
   game.physics.arcade.collide(snakes, snakes);
   game.physics.arcade.collide(destructor, land, function(destr, land) {
-    if (land.key != 'darkEarth') {
+    if (land.key !== 'darkEarth') {
       land.destroy();
     }
   });
-  game.physics.arcade.overlap(player, stars, collectStar, null, this); //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
-  if (player.body.velocity.y > 750 && willFallDamage == false) {
-    console.log('ahhh');
+  //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
+  game.physics.arcade.overlap(player, stars, collectStar, null, this);
+  if (player.body.velocity.y > 750 && willFallDamage === false) {
     willFallDamage = true;
-  } else if (player.body.velocity.y <= 750 && willFallDamage == true) {
+  } else if (player.body.velocity.y <= 750 && willFallDamage === true) {
     willFallDamage = false;
   }
   game.physics.arcade.collide(player, snakes, null, function(p, s) {
-    if (healthCooldown == 0) {
+    if (healthCooldown === 0) {
       health -= 12;
       totalHurts += 1;
       player.body.velocity.y = -300;
@@ -203,17 +201,16 @@ function update() {
 
   // Snake Management
   for (var i = 0; i < snakes.children.length; i++) {
-    // If a right wall stops snake, turn left
-    if (snakes.children[i].animations.name == 'right' &&
+    if (snakes.children[i].animations.name === 'right' &&
         snakes.children[i].body.velocity.x <= 1 &&
         snakes.children[i].animations.frame > 6) {
+      // If a right wall stops snake, turn left
       snakes.children[i].body.velocity.x = -150;
       snakes.children[i].animations.play('left');
-    }
-    // If a left wall stops snake, turn right
-    else if (snakes.children[i].animations.name == 'left' &&
-             snakes.children[i].body.velocity.x >= -1 &&
-             snakes.children[i].animations.frame > 2) {
+    } else if (snakes.children[i].animations.name === 'left' &&
+               snakes.children[i].body.velocity.x >= -1 &&
+               snakes.children[i].animations.frame > 2) {
+      // If a left wall stops snake, turn right
       snakes.children[i].body.velocity.x = 150;
       snakes.children[i].animations.play('right');
     }
@@ -222,14 +219,13 @@ function update() {
   // Bomb management
   if (bombs.children.length > 0) {
     // Only one bomb at a time anyways, so I forgo to the looping through children
-    if (bombs.children[0].animations.frame == 6) {
+    if (bombs.children[0].animations.frame === 6) {
       bombs.children[0].play('explode');
       // insert bomb damage here
     }
-    if (bombs.children[0].animations.frame == 12) {
+    if (bombs.children[0].animations.frame === 12) {
       explode();
     }
-
   }
   // Function calls in other files
   hud(); // Located in hud.js
@@ -247,12 +243,10 @@ function update() {
   if (player.body.velocity.y > 600 && fallDmgWarning < 1) {
     fallDmgWarning += 0.1;
     $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')');
-  } else if (willFallDamage == false && fallDmgWarning > 0) {
+  } else if (willFallDamage === false && fallDmgWarning > 0) {
     fallDmgWarning -= 0.1;
     $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')');
   }
-
-
 }
 
 
@@ -273,10 +267,10 @@ function tictoc() {
   if (healthCooldown > 0) {
     healthCooldown -= 1;
     player.alpha = 0.5;
-  } else if (player.alpha != 1) {
+  } else if (player.alpha !== 1) {
     player.alpha = 1;
   }
-  if ((timer > 120) && (vignette.alpha != 0 || blackness.alpha != 0)) {
+  if ((timer > 120) && (vignette.alpha !== 0 || blackness.alpha !== 0)) {
     // for some reason this runs every second. It is why it is inside tictoc
     vignette.alpha = 0;
     blackness.alpha = 0;
@@ -310,12 +304,10 @@ function tictoc() {
   } else {
     $('#health-bar').attr('style', 'width: ' + 0 + 'px');
   }
-
 }
 
 function collectStar (player, star) {
-
-    // Removes the star from the screen
+  // Removes the star from the screen
   star.kill();
   timer += 10;
   totalCollects += 1;
