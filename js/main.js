@@ -1,9 +1,12 @@
-var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', { preload: preload, create: create, update: update });
+var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
+  preload: preload,
+  create: create, update: update });
 
 // Land Variables
-var region = [60,0]; // Region is a offset for the Perlin generator. Split inf loading into chunks for management.
-var regionsLoaded = ["60,0"]; // regionsLoaded is stored as strings as a bugfix
+var region = [60, 0]; // Region is a offset for the Perlin generator. Split inf loading into chunks for management.
+var regionsLoaded = ['60,0']; // regionsLoaded is stored as strings as a bugfix
 var land;
+var ground;
 
 // Physics variables
 var sprite;
@@ -92,7 +95,7 @@ function create() {
   snakes.enableBody = true;
 
   //  Add a sprite with animations & directions
-  player = game.add.sprite(96540,100, 'dude');
+  player = game.add.sprite(96540, 100, 'dude');
   player.animations.add('left', [0, 1, 2, 3], 10, true);
   player.animations.add('turn', [4], 20, true);
   player.animations.add('right', [5, 6, 7, 8], 10, true);
@@ -120,7 +123,7 @@ function create() {
   vignette.alpha = 0.8;
   game.time.events.repeat(Phaser.Timer.SECOND * 1, 100000, tictoc, this);
   game.time.events.repeat(Phaser.Timer.SECOND * 10, 100000, function() {
-    if (health < 100) { health += 1;}
+    if (health < 100) { health += 1; }
     // healthText.text = 'health: ' + health + '%';
   }, this);
   game.time.events.repeat(1, 100000000, function() {
@@ -144,12 +147,12 @@ function update() {
   // If the popup is up, reset the timer constantly
   if (isPopup == true) {
     // Failsafe incase of glitch with popup
-    if (player.body.velocity.x !=0) {isPopup = false;console.log("test");}
+    if (player.body.velocity.x != 0) { isPopup = false; console.log('test'); }
     timer = 120;
     console.log(timer);
   }
-  $('#replay').click(function(){
-    region.push("60,0");
+  $('#replay').click(function() {
+    region.push('60,0');
     player.x = 96540;
     player.y = 100;
     health = 100;
@@ -161,7 +164,7 @@ function update() {
     willFallDamage = false;
     depth = 0;
     currBlackness = 0.0;
-  })
+  });
 
   // Keep region info up to date
   region[0] = Math.floor(player.x / 1600);
@@ -173,19 +176,19 @@ function update() {
   game.physics.arcade.collide(stars, land);
   game.physics.arcade.collide(snakes, land);
   game.physics.arcade.collide(snakes, snakes);
-  game.physics.arcade.collide(destructor, land, function(destr,land) {
-    if (land.key != "darkEarth") {
+  game.physics.arcade.collide(destructor, land, function(destr, land) {
+    if (land.key != 'darkEarth') {
       land.destroy();
     }
   });
   game.physics.arcade.overlap(player, stars, collectStar, null, this); //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   if (player.body.velocity.y > 750 && willFallDamage == false) {
-    console.log("ahhh");
+    console.log('ahhh');
     willFallDamage = true;
   } else if (player.body.velocity.y <= 750 && willFallDamage == true) {
     willFallDamage = false;
   }
-  game.physics.arcade.collide(player, snakes, null, function(p,s) {
+  game.physics.arcade.collide(player, snakes, null, function(p, s) {
     if (healthCooldown == 0) {
       health -= 12;
       totalHurts += 1;
@@ -199,7 +202,7 @@ function update() {
   // ============= End Collision Detection ============ //
 
   // Snake Management
-  for (var i=0; i<snakes.children.length; i++) {
+  for (var i = 0; i < snakes.children.length; i++) {
     // If a right wall stops snake, turn left
     if (snakes.children[i].animations.name == 'right' &&
         snakes.children[i].body.velocity.x <= 1 &&
@@ -243,10 +246,10 @@ function update() {
   // Fall damage aura warning
   if (player.body.velocity.y > 600 && fallDmgWarning < 1) {
     fallDmgWarning += 0.1;
-    $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')')
+    $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')');
   } else if (willFallDamage == false && fallDmgWarning > 0) {
     fallDmgWarning -= 0.1;
-    $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')')
+    $('#game').css('box-shadow', '0 0 50px 5px rgba(255,153,0, ' + fallDmgWarning + ')');
   }
 
 
@@ -270,7 +273,7 @@ function tictoc() {
   if (healthCooldown > 0) {
     healthCooldown -= 1;
     player.alpha = 0.5;
-  } else if ( player.alpha != 1) {
+  } else if (player.alpha != 1) {
     player.alpha = 1;
   }
   if ((timer > 120) && (vignette.alpha != 0 || blackness.alpha != 0)) {
@@ -281,13 +284,13 @@ function tictoc() {
   }
 
   // Destroy snakes if 3200px away (2 regions)
-  for (var i=0; i<snakes.children.length; i++) {
+  for (var i = 0; i < snakes.children.length; i++) {
     if (Math.abs(snakes.children[i].y - player.y) > 3200) {
       snakes.children[i].destroy();
     }
   }
   // Destroy stars if 3200px away (2 regions)
-  for (var i=0; i<stars.children.length; i++) {
+  for (var i = 0; i < stars.children.length; i++) {
     if (Math.abs(stars.children[i].y - player.y) > 3200) {
       stars.children[i].destroy();
     }
@@ -295,17 +298,17 @@ function tictoc() {
 
   // Update out-of-canvas elements
   if (depth < 1000) {
-    $('#depth-circle').attr('style','top: ' + (Math.floor(depth / 1.81) - 10) + 'px');
-    $('.score-tag').attr('style','margin-top: ' + (Math.floor(depth / 1.81) + 13) + 'px');
-    $('#score-tag-elem').html('<a>' + depth + ' Meters</a>')
+    $('#depth-circle').attr('style', 'top: ' + (Math.floor(depth / 1.81) - 10) + 'px');
+    $('.score-tag').attr('style', 'margin-top: ' + (Math.floor(depth / 1.81) + 13) + 'px');
+    $('#score-tag-elem').html('<a>' + depth + ' Meters</a>');
   } else {
-    $('#score-tag-elem').html('<a>' + depth/1000 + ' Km</a>')
+    $('#score-tag-elem').html('<a>' + depth / 1000 + ' Km</a>');
   }
   if (health > 0 && health <= 100) {
     // Change these to .css() eventually
-    $('#health-bar').attr('style','width: ' + Math.floor(health * 8) + 'px');
+    $('#health-bar').attr('style', 'width: ' + Math.floor(health * 8) + 'px');
   } else {
-    $('#health-bar').attr('style','width: ' + 0 + 'px');
+    $('#health-bar').attr('style', 'width: ' + 0 + 'px');
   }
 
 }
@@ -313,27 +316,27 @@ function tictoc() {
 function collectStar (player, star) {
 
     // Removes the star from the screen
-    star.kill();
-    timer += 10;
-    totalCollects += 1;
+  star.kill();
+  timer += 10;
+  totalCollects += 1;
 }
 
 function explode() {
   // destructor wont clean up all the way. bug. Should not be a problem.
-  for (i=0; i<destructor.children.length; i++) {
+  for (i = 0; i < destructor.children.length; i++) {
     // console.log(i);
     destructor.children[i].destroy();
   }
   // remember, the sprite is technically 50px above the player.
-  destroy1 = destructor.create( bombs.children[0].x - 50, bombs.children[0].y + 50, 'destroy');
-  destroy2 = destructor.create( bombs.children[0].x + 50, bombs.children[0].y + 50, 'destroy');
-  destroy3 = destructor.create( bombs.children[0].x, bombs.children[0].y, 'destroy');
-  destroy4 = destructor.create( bombs.children[0].x, bombs.children[0].y + 100, 'destroy');
+  destroy1 = destructor.create(bombs.children[0].x - 50, bombs.children[0].y + 50, 'destroy');
+  destroy2 = destructor.create(bombs.children[0].x + 50, bombs.children[0].y + 50, 'destroy');
+  destroy3 = destructor.create(bombs.children[0].x, bombs.children[0].y, 'destroy');
+  destroy4 = destructor.create(bombs.children[0].x, bombs.children[0].y + 100, 'destroy');
 
-  destroy5 = destructor.create( bombs.children[0].x + 65, bombs.children[0].y, 'destroy');
-  destroy6 = destructor.create( bombs.children[0].x - 65, bombs.children[0].y, 'destroy');
-  destroy7 = destructor.create( bombs.children[0].x + 50, bombs.children[0].y + 100, 'destroy');
-  destroy8 = destructor.create( bombs.children[0].x - 50, bombs.children[0].y + 100, 'destroy');
+  destroy5 = destructor.create(bombs.children[0].x + 65, bombs.children[0].y, 'destroy');
+  destroy6 = destructor.create(bombs.children[0].x - 65, bombs.children[0].y, 'destroy');
+  destroy7 = destructor.create(bombs.children[0].x + 50, bombs.children[0].y + 100, 'destroy');
+  destroy8 = destructor.create(bombs.children[0].x - 50, bombs.children[0].y + 100, 'destroy');
   bombs.children[0].destroy();
   // console.log("exploded");
 }
