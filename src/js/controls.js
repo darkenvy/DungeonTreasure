@@ -5,27 +5,24 @@ function controls() {
   if (cursors.left.isDown) {
     player.body.velocity.x = -200;
 
-    if (facing != 'left') {
+    if (facing !== 'left') {
       player.animations.play('left');
       facing = 'left';
     }
-  }
-  else if (cursors.right.isDown) {
+  } else if (cursors.right.isDown) {
     player.body.velocity.x = 200;
 
-    if (facing != 'right') {
+    if (facing !== 'right') {
       player.animations.play('right');
       facing = 'right';
     }
-  }
-  else {
-    if (facing != 'idle') {
+  } else {
+    if (facing !== 'idle') {
       player.animations.stop();
 
-      if (facing == 'left') {
+      if (facing === 'left') {
         player.frame = 0;
-      }
-      else {
+      } else {
         player.frame = 5;
       }
 
@@ -37,10 +34,11 @@ function controls() {
     player.body.velocity.y = -450;
   }
 
-  if (cursors.down.isDown && bombs.children.length == 0 && timer > 5) {
+  if (cursors.down.isDown && bombs.children.length === 0 && timer > 5) {
     timer -= 5;
 
-    var bomb = bombs.create(Math.floor(player.x / 64) * 64, (Math.floor(player.y / 64) * 64) - 50, 'bomb');
+    var bomb = bombs.create(Math.floor(player.x / 64) * 64,
+      (Math.floor(player.y / 64) * 64) - 50, 'bomb');
     bomb.smooth = false;
     bomb.scale.x = 2;
     bomb.scale.y = 2;
@@ -58,7 +56,6 @@ function controls() {
       timer -= 0.3;
       // timer = (Math.floor(timer * 10))/10;
       // timerText.text = timer;
-
     }
   }
 }
