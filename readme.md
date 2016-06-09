@@ -1,21 +1,28 @@
-#TEMPLATE JS
+#Dungeon Delver
 
-A Front-End template setup with BrowserSync, ESLint, and CSSLint.
+A quick, roguelike game where the main objective is to stay alive and delve as deep into the depths as possible
 
-##Getting Started
+##How to Play
 
-This is a template, so these instructions assume you'll be setting up a new repo. In order to pull new updates to this template, we recommend that you **add this repo as a remote**.
+Get as far down in the earth as possible before your all light from your torch is extinguished. Collecting coal can provide additional fuel for your light-source, however be warned that utilizing bombs or using the jet-pack only further diminishes your rather limited supply. How far down can you get?
 
-* Create a new repository
-  * `git init` in a new folder, or create a repo on Github and clone to your computer
-* Navigate to the new repository and add this repository as a remote.
-  * `git remote add template git@github.com:WDI-SEA/TEMPLATE-js.git`
-* Pull the template into your new repository
-  * `git pull template master`
-  * You should now have the template files in your repo
-* Run `npm install` to install dependencies
+##Controls
+Hover - Spacebar
+Jump - Up Arrow
+Move - Left/Right Arrows
+Bomb - Down Arrow
 
-##Commands
-* `npm start` - start the BrowserSync server
-* `npm run lint:css` - lint CSS
-* `npm run lint:js` - lint JS
+##Scoring
+Scores are based off of the following factors
+* Depth Achieved
+* Number of pickups aquired
+* Number of times damage was taken
+* Remaining Health
+* Remaining Time
+
+##How to Clone
+* Perform the usual cloning procedure
+* The game engine (Phaser) cannot be ran directly and requires a server
+  * `npm start` - start the BrowserSync server
+  * `python -m SimpleHTTPServer` - Python's quick server
+  * Other options are fine too
