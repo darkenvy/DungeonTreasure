@@ -19,7 +19,7 @@ function spawnRegion(regionX, regionY) {
       rockType = Math.floor(rockType * 3);
       specNum = Math.floor(specNum * 10);
       starNum = Math.floor(starNum * 8);
-      snakeNum = Math.floor(snakeNum * 8);
+      snakeNum = Math.floor(snakeNum * 7);
 
       // offsetY > 4 is for the first tile of the game. So he is not undeground
       if (cellNum !== 3 && cellNum !== 4 && offsetY > 4) {
@@ -58,7 +58,7 @@ function spawnRegion(regionX, regionY) {
         // star.body.gravity.y = 300;
         // star.body.bounce.y = 0.7 + Math.random() * 0.2;
       }
-      if (cellNum === 3 && snakeNum === 1 && offsetY > 4) {
+      if (cellNum === 3 && snakeNum === 1 && snakes.children.length < 40 && offsetY > 4) {
         //  Create a snake inside of the 'snakes' group
         var snake = snakes.create((offsetX * 64), (offsetY * 64), 'snake');
         snake.animations.add('left', [0, 1, 2, 3], 10, true);
@@ -82,7 +82,7 @@ function regionManagement() {
     if (regionsLoaded.indexOf((region[0] - 1).toString() + ',' + region[1].toString()) === -1) {
       regionsLoaded.push((region[0] - 1).toString() + ',' + region[1].toString());
       // console.log(regionsLoaded, regionsLoaded.length, land.children.length,
-         // x'snakes:', snakes.children.length);
+         // 'snakes:', snakes.children.length);
       spawnRegion(region[0] - 1, region[1]);
     }
   }
@@ -91,7 +91,7 @@ function regionManagement() {
     if (regionsLoaded.indexOf((region[0] + 1).toString() + ',' + region[1].toString()) === -1) {
       regionsLoaded.push((region[0] + 1).toString() + ',' + region[1].toString());
       // console.log(regionsLoaded, regionsLoaded.length, land.children.length,
-         // x'snakes:', snakes.children.length);
+         // 'snakes:', snakes.children.length);
       spawnRegion(region[0] + 1, region[1]);
     }
   }
@@ -101,7 +101,7 @@ function regionManagement() {
     if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1] - 1).toString()) === -1) {
       regionsLoaded.push(region[0].toString() + ',' + (region[1] - 1).toString());
       // console.log(regionsLoaded, regionsLoaded.length, land.children.length,
-         // x'snakes:', snakes.children.length);
+         // 'snakes:', snakes.children.length);
       spawnRegion(region[0], region[1] - 1);
     }
   }
@@ -110,52 +110,34 @@ function regionManagement() {
     if (regionsLoaded.indexOf(region[0].toString() + ',' + (region[1] + 1).toString()) === -1) {
       regionsLoaded.push(region[0].toString() + ',' + (region[1] + 1).toString());
       // console.log(regionsLoaded, regionsLoaded.length, land.children.length,
-         // x'snakes:', snakes.children.length);
+         // 'snakes:', snakes.children.length);
       spawnRegion(region[0], region[1] + 1);
     }
   }
-
-  // ======================== Cleanup ========================= //
-  // Destroy pieces if too far. Since levels are infinite, cleanup is needed.
-  // This procedure only removes pieces in a perimeter around the player.
-  // I think there is a leak as over time the game gets slower & more chunks loaded.
-  land.forEach(function(piece) {
-    if (Math.floor(piece.x / 1600) === region[0] - 2) {
-      removeRegionLoaded(region[0] - 2, 0);
-      piece.destroy();
-    }
-    if (Math.floor(piece.x / 1600) === region[0] + 2) {
-      removeRegionLoaded(region[0] + 2, 0);
-      piece.destroy();
-    }
-    if (Math.floor(piece.y / 1600) === region[1] - 2) {
-      removeRegionLoaded(region[1] - 2, 1);
-      piece.destroy();
-    }
-    if (Math.floor(piece.y / 1600) === region[1] + 2) {
-      removeRegionLoaded(region[1] + 2, 1);
-      piece.destroy();
-    }
-  });
 }
+  // ======================== Cleanup ========================= //
 
-function removeRegionLoaded(region, selector) {
-  // console.log("destroyed");
-  for (var i = 0; i < regionsLoaded.length; i++) {
-    if (regionsLoaded[i].split(',')[selector] === region) {
+
+function deepClean() {
+  console.log("Before: ", land.children.length);
+  for (var i=0; i<land.children.length; i++) {
+    if (Math.floor(land.children[i].y / 25 / 64) <= region[1] - 2) {
+      land.children[i].destroy();
+    }
+  }
+  // land.forEach(function(piece) {
+  //   // If the piece is in 2 regions above, destroy it.
+  //   if (Math.floor(piece.y / 25 / 64) <= region[1] - 2) {
+  //     piece.destroy();
+  //   }
+  // })
+  console.log("After: ", land.children.length);
+  // Clean out regions from the regionsLoaded list
+  // Unfortunately, for performance, we must assume the region is unloaded.
+  for (var i=0; i<regionsLoaded.length; i++) {
+    if (regionsLoaded[i].split(',')[1] <= region[1] - 2) {
+      console.log("region removed: ", regionsLoaded[i]);
       regionsLoaded.splice(i, 1);
-      // console.log(land.length);
-      // console.log(regionsLoaded, i);
     }
   }
 }
-
-
-// function deepCleanse() {
-//   regionsLoaded.forEach(function(regPair) {
-//     // If the player is 3 chunks away (vertically) than a loaded chunk, unload it
-//     if ((regionsLoaded[i].split(',')[1] * 25 * 64) + player.y > 4800 ) {
-
-//     }
-//   })
-// }

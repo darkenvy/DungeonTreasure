@@ -125,6 +125,7 @@ function create() {
   game.time.events.repeat(Phaser.Timer.SECOND * 1, 100000, tictoc, this);
   game.time.events.repeat(Phaser.Timer.SECOND * 10, 100000, function() {
     if (health < 100) { health += 1; }
+    deepClean();
     // healthText.text = 'health: ' + health + '%';
   }, this);
   game.time.events.repeat(1, 100000000, function() {
