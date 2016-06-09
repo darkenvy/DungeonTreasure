@@ -42,12 +42,12 @@ function spawnRegion(regionX, regionY) {
         } else {
           // This is a bugfix. We obviously dont want lands at 0,0 but without this
           // the game refuses to start in certain cases
-          ground = land.create(0, 0, 'earth');
+          ground = land.create(0,0, 'earth');
         }
         ground.body.immovable = true;
       }
       // Create background tiles
-      if (((cellNum === 3 || cellNum === 4) || (specNum === 7)) && offsetY > 4) {
+      if (((cellNum === 3 || cellNum === 4) || (specNum === 7 )) && offsetY > 4) {
         var bg = background.create(offsetX * 64, offsetY * 64, 'background');
       } else if (offsetY <= 4) {
         var bgsky = background.create(offsetX * 64, offsetY * 64, 'backgroundsky');
@@ -120,8 +120,8 @@ function regionManagement() {
 
 
 function deepClean() {
-  // console.log("Before: ", land.children.length);
-  for (var i = 0; i < land.children.length; i++) {
+  console.log("Before: ", land.children.length);
+  for (var i=0; i<land.children.length; i++) {
     if (Math.floor(land.children[i].y / 25 / 64) <= region[1] - 2) {
       land.children[i].destroy();
     }
@@ -132,12 +132,12 @@ function deepClean() {
   //     piece.destroy();
   //   }
   // })
-  // console.log("After: ", land.children.length);
+  console.log("After: ", land.children.length);
   // Clean out regions from the regionsLoaded list
   // Unfortunately, for performance, we must assume the region is unloaded.
-  for (var i = 0; i < regionsLoaded.length; i++) {
+  for (var i=0; i<regionsLoaded.length; i++) {
     if (regionsLoaded[i].split(',')[1] <= region[1] - 2) {
-      // console.log("region removed: ", regionsLoaded[i]);
+      console.log("region removed: ", regionsLoaded[i]);
       regionsLoaded.splice(i, 1);
     }
   }
