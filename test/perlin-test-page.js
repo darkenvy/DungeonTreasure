@@ -73,8 +73,8 @@ function perlinHTML() {
   var pn = new Perlin('Reno');
   for (var y = 0; y < 40; y++) {
     for (var x = 0; x < 40; x++) {
-      // cellNum = pn.noise((x + lrPan)/zoom, (y + udPan)/zoom, 0);
-      cellNum = pn.noise((x + lrPan) / 4, (y + udPan) / 4, 0.25);
+      cellNum = pn.noise((x + lrPan)/zoom, (y + udPan)/zoom, 0);
+      // cellNum = pn.noise((x + lrPan) / 4, (y + udPan) / 4, 0.25);
 
       if (cellNum >= expandB && cellNum < expandT) {
         cellNum = 3;

@@ -48,8 +48,9 @@ var destroy;
 
 function preload() {
   // Load Image Assets
-  game.load.image('sky', 'assets/tests/sky.png');
-  game.load.image('ground', 'assets/sprites/platform.png');
+  // game.load.image('sky', 'assets/tests/sky.png');
+  // game.load.image('ground', 'assets/sprites/platform.png');
+  // game.load.image('star', 'assets/games/starstruck/star.png');
   game.load.image('earth', 'img/earth.png', 64, 64);
   game.load.image('paleEarth', 'img/paleearth.png', 64, 64);
   game.load.image('earthgrass', 'img/earthgrass.png', 64, 64);
@@ -62,7 +63,6 @@ function preload() {
   game.load.image('dark', 'img/dark.png', 64, 64);
   game.load.image('blackness', 'img/blackness.jpg', 64, 64);
   game.load.image('destroy', 'img/destroy.png', 16, 16);
-  // game.load.image('star', 'assets/games/starstruck/star.png');
   game.load.image('star', 'img/ore.png', 64, 64);
   game.load.spritesheet('snake', 'img/snake.png', 64, 48);
   game.load.spritesheet('dude', 'img/dude.png', 32, 48);
@@ -80,7 +80,7 @@ function create() {
 
   // Music - needs to loop
   music = game.add.audio('boden');
-  // music.play();
+  music.play();
 
   // Group creation for physical objects. Enable body for collision methods
   land = game.add.group(); // land is now a group that contains all collidable tiles

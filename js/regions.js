@@ -2,8 +2,8 @@
 
 function spawnRegion(regionX, regionY) {
   // Perlin noise returns a float between 0-1.
-  var pn = new Perlin('Reno');
-  // var pn = new Perlin(Math.random());
+  // var pn = new Perlin('Reno');
+  var pn = new Perlin(Math.random());
   for (var y = 0; y < 25; y++) {
     for (var x = 0; x < 25; x++) {
       var offsetX = (regionX * 25) + x;
@@ -46,7 +46,7 @@ function spawnRegion(regionX, regionY) {
         ground.body.immovable = true;
       }
       // Create background tiles
-      if ((cellNum === 3 || cellNum === 4) && offsetY > 4) {
+      if (((cellNum === 3 || cellNum === 4) || (specNum === 7 )) && offsetY > 4) {
         var bg = background.create(offsetX * 64, offsetY * 64, 'background');
       } else if (offsetY <= 4) {
         var bgsky = background.create(offsetX * 64, offsetY * 64, 'backgroundsky');
