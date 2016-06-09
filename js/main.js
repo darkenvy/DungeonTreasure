@@ -175,13 +175,12 @@ function update() {
   game.physics.arcade.collide(stars, land);
   game.physics.arcade.collide(snakes, land);
   game.physics.arcade.collide(snakes, snakes);
-  game.physics.arcade.collide(destructor, land, function(destr, landp) {
-    if (landp.key !== 'darkEarth') {
+  game.physics.arcade.collide(destructor, land, function(destr, land) {
+    if (land.key !== 'darkEarth') {
       land.destroy();
     }
   });
-  //  Checks to see if the player overlaps with any of the stars,
-  // if he does call the collectStar function
+  //  Checks to see if the player overlaps with any of the stars, if he does call the collectStar function
   game.physics.arcade.overlap(player, stars, collectStar, null, this);
   if (player.body.velocity.y > 750 && willFallDamage === false) {
     willFallDamage = true;
@@ -240,7 +239,7 @@ function update() {
     $('#scoreList :nth-child(3)').text('Dmg Taken: ' + totalHurts * 12 + ' HP');
     $('#scoreList :nth-child(4)').text('Time Remaining: ' + Math.floor(timer) + ' sec');
     $('#myScore').modal();
-    $('#finalScore').text(score + Math.floor(timer));
+    $('#finalScore').text( score + Math.floor(timer));
     // timer = 1;
     healthCooldown = 9001;
   }
@@ -313,7 +312,7 @@ function tictoc() {
   }
 }
 
-function collectStar (player1, star) {
+function collectStar (player, star) {
   // Removes the star from the screen
   star.kill();
   timer += 10;
