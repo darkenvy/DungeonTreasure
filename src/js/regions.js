@@ -18,7 +18,8 @@ function spawnRegion(regionX, regionY) {
       cellNum = Math.floor(cellNum * 6);
       rockType = Math.floor(rockType * 3);
       specNum = Math.floor(specNum * 10);
-      starNum = Math.floor(starNum * 8);
+      // starNum = Math.floor(starNum * 8);
+      starNum = Math.floor(starNum * 2);
       snakeNum = Math.floor(snakeNum * 7);
 
       // offsetY > 4 is for the first tile of the game. So he is not undeground
