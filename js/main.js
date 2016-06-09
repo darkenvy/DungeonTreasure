@@ -65,7 +65,7 @@ function preload() {
   // game.load.image('star', 'assets/games/starstruck/star.png');
   game.load.image('star', 'img/ore.png', 64, 64);
   game.load.spritesheet('snake', 'img/snake.png', 64, 48);
-  game.load.spritesheet('dude', 'assets/games/starstruck/dude.png', 32, 48);
+  game.load.spritesheet('dude', 'img/dude.png', 32, 48);
   game.load.spritesheet('bomb', 'img/BombExploding.png', 32, 64);
   game.load.audio('boden', ['audio/Blz_-_May.mp3']);
 }
